@@ -21,6 +21,12 @@ impl App {
             community_size,
         }
     }
+
+    fn update_comunity(&mut self) {
+        for person in &mut self.community {
+            person.update_position();
+        }
+    }
 }
 
 #[cfg(test)]

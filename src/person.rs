@@ -32,7 +32,7 @@ impl Person {
         }
     }
 
-    fn update_position(&mut self) {
+    pub fn update_position(&mut self) {
         self.x += self.velocity_x;
         self.y += self.velocity_y;
 
