@@ -1,3 +1,7 @@
+use rand::Rng;
+
+use crate::setting::*;
+
 pub enum PersonState {
     Susceptible,
     Infected,
@@ -11,4 +15,20 @@ pub struct Person {
     pub velocity_y: f32,
     pub state: PersonState,
     pub infection_duration: f32,
+}
+
+impl Person {
+    pub fn new() -> Self {
+        let mut rng = rand::thread_rng();
+        let angle = rng.gen_range(0.0..std::f32::consts::TAU);
+
+        Self {
+            x: rng.gen_range(0.0..BORDER_WIDTH),
+            y: rng.gen_range(0.0..BORDER_HEIGHT),
+            vx: angle.cos() * MOVING_SPEED,
+            vy: angle.sin() * MOVING_SPEED,
+            state: ParticleState::Susceptible,
+            infection_duration: 0.0,
+        }
+    }
 }

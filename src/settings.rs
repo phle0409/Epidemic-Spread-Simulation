@@ -1,0 +1,3 @@
+const BORDER_WIDTH: f32 = 400.0;
+const BORDER_HEIGHT: f32 = 400.0;
+const MOVING_SPEED: f32 = 1.5;
