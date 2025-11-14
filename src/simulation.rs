@@ -22,3 +22,22 @@ impl App {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::person::{Person, PersonState};
+    use crate::settings::*;
+
+    #[test]
+    fn test_create_new_app() {
+        let app = App::new();
+        assert_eq!(app.total_time, 0.0);
+        assert_eq!(app.community_size, 100);
+        assert_eq!(app.community.len(), 100);
+        for person in &app.community {
+            assert!(matches!(person.state, PersonState::Susceptible));
+            assert_eq!(person.infection_duration, 0.0);
+        }
+    }
+}
