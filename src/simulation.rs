@@ -46,4 +46,28 @@ mod tests {
             assert_eq!(person.infection_duration, 0.0);
         }
     }
+
+    /// Check that position should change. If position does not change, the velocity must change due to a corner case.
+    #[test]
+    fn test_update_comunity_first_person() {
+        let mut app = App::new();
+        let initial_x = app.community[0].x;
+        let initial_y = app.community[0].y;
+        let initial_velocity_x = app.community[0].velocity_x;
+        let initial_velocity_y = app.community[0].velocity_y;
+
+        app.update_comunity();
+
+        let new_position_x = app.community[0].x;
+        let new_position_y = app.community[0].y;
+        let new_velocity_x = app.community[0].velocity_x;
+        let new_velocity_y = app.community[0].velocity_y;
+
+        assert!(
+            new_position_x != initial_x
+                || new_position_y != initial_y
+                || new_velocity_x != initial_velocity_x
+                || new_velocity_y != initial_velocity_y
+        );
+    }
 }
