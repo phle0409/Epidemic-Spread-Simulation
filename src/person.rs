@@ -23,8 +23,8 @@ impl Person {
         let angle = rng.gen_range(0.0..std::f32::consts::TAU);
 
         Self {
-            x: rng.gen_range(0.0..BORDER_WIDTH),
-            y: rng.gen_range(0.0..BORDER_HEIGHT),
+            x: rng.gen_range(0.0..SIMULATION_AREA_SIZE),
+            y: rng.gen_range(0.0..SIMULATION_AREA_SIZE),
             vx: angle.cos() * MOVING_SPEED,
             vy: angle.sin() * MOVING_SPEED,
             state: ParticleState::Susceptible,
