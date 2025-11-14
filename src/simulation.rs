@@ -22,7 +22,7 @@ impl App {
         }
     }
 
-    fn update_comunity(&mut self) {
+    fn update_community(&mut self) {
         for person in &mut self.community {
             person.update_position();
         }
@@ -49,14 +49,14 @@ mod tests {
 
     /// Check that position should change. If position does not change, the velocity must change due to a corner case.
     #[test]
-    fn test_update_comunity_first_person() {
+    fn test_update_community_first_person() {
         let mut app = App::new();
         let initial_x = app.community[0].x;
         let initial_y = app.community[0].y;
         let initial_velocity_x = app.community[0].velocity_x;
         let initial_velocity_y = app.community[0].velocity_y;
 
-        app.update_comunity();
+        app.update_community();
 
         let new_position_x = app.community[0].x;
         let new_position_y = app.community[0].y;
