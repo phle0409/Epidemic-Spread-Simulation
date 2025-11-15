@@ -15,7 +15,7 @@ pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 ///
 /// # Default Value
 /// `1.5` pixels per frame
-pub const MOVING_SPEED: f32 = 1.5;
+pub const MOVING_SPEED: f32 = 1.0;
 
 /// Creates a margin for better visibility by preventing people from getting too close to the border.
 ///

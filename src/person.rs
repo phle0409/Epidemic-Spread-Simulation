@@ -94,7 +94,7 @@ mod tests {
     #[test]
     fn test_update_position_right_border() {
         let mut person = Person {
-            x: 339.0,
+            x: SIMULATION_AREA_SIZE - MARGIN_FROM_WALL - 1.0,
             y: 10.0,
             velocity_x: 2.0,
             velocity_y: 2.0,
@@ -131,7 +131,7 @@ mod tests {
     fn test_update_position_bottom_border() {
         let mut person = Person {
             x: 200.0,
-            y: 339.0,
+            y: SIMULATION_AREA_SIZE - MARGIN_FROM_WALL - 1.0,
             velocity_x: 2.0,
             velocity_y: 2.0,
             state: PersonState::Susceptible,
