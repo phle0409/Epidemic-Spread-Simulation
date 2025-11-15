@@ -1,4 +1,5 @@
 use rand::Rng;
+use eframe::egui;
 
 use crate::settings::*;
 
@@ -6,6 +7,16 @@ pub enum PersonState {
     Susceptible,
     Infected,
     Recovered,
+}
+
+impl PersonState {
+    pub fn person_colors(&self) -> egui::Color32 {
+        match self {
+            PersonState::Infected => egui::Color32::RED,
+            PersonState::Recovered => egui::Color32::GRAY,
+            PersonState::Susceptible => egui::Color32::BLUE,
+        }
+    }
 }
 
 pub struct Person {
@@ -62,6 +73,15 @@ impl Person {
 mod tests {
     use super::*;
     use crate::settings::*;
+
+    #[test]
+    fn test_person_colors() {
+        use eframe::egui;
+
+        assert_eq!(PersonState::Infected.person_colors(), egui::Color32::RED);
+        assert_eq!(PersonState::Recovered.person_colors(), egui::Color32::GRAY);
+        assert_eq!(PersonState::Susceptible.person_colors(), egui::Color32::BLUE);
+    }
 
     #[test]
     fn test_create_new_person() {

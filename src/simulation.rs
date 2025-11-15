@@ -57,14 +57,7 @@ impl eframe::App for Simulation {
             for person in &self.community {
                 let particle_pos =
                     egui::pos2(border_offset_x + person.x, border_offset_y + person.y);
-
-                let person_color = match person.state {
-                    PersonState::Infected => egui::Color32::RED,
-                    PersonState::Recovered => egui::Color32::GRAY,
-                    PersonState::Susceptible => egui::Color32::BLUE,
-                };
-
-                painter.circle_filled(particle_pos, 4.0, person_color);
+                painter.circle_filled(particle_pos, 4.0, person.state.person_colors());
             }
         });
 
