@@ -13,7 +13,11 @@ pub struct Simulation {
 impl Simulation {
     pub fn new() -> Self {
         let community_size = 100;
-        let community: Vec<Person> = (0..community_size).map(|_| Person::new()).collect();
+        let mut community: Vec<Person> = (0..community_size).map(|_| Person::new()).collect();
+
+        for i in 0..INITIAL_INFECTED_PEOPLE as usize {
+            community[i].state = PersonState::Infected;
+        }
 
         Self {
             community,
@@ -67,14 +71,22 @@ mod tests {
     use crate::person::{Person, PersonState};
     use crate::settings::*;
 
+    // check create new app with default INITIAL_INFECTED_PEOPLE
     #[test]
     fn test_create_new_app() {
         let app = Simulation::new();
         assert_eq!(app.total_time, 0.0);
         assert_eq!(app.community_size, 100);
         assert_eq!(app.community.len(), 100);
+
+        let infected = app.community
+            .iter()
+            .filter(|p| matches!(p.state, PersonState::Infected))
+            .count();
+
+        assert_eq!(infected, INITIAL_INFECTED_PEOPLE);
+        
         for person in &app.community {
-            assert!(matches!(person.state, PersonState::Susceptible));
             assert_eq!(person.infection_duration, 0.0);
         }
     }

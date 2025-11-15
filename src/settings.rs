@@ -22,3 +22,11 @@ pub const MOVING_SPEED: f32 = 1.0;
 /// # Default Value
 /// `10.0` pixels
 pub const MARGIN_FROM_WALL: f32 = 10.0;
+
+
+
+/// Number of people who are infected when starting the simulation in a community.
+///
+/// # Default Value
+/// `3` infected people
+pub const INITIAL_INFECTED_PEOPLE: usize = 3; 
