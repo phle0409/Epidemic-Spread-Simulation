@@ -15,15 +15,13 @@ pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 ///
 /// # Default Value
 /// `1.5` pixels per frame
-pub const MOVING_SPEED: f32 = 1.0;
+pub const MOVING_SPEED: f32 = 1.25;
 
 /// Creates a margin for better visibility by preventing people from getting too close to the border.
 ///
 /// # Default Value
 /// `10.0` pixels
 pub const MARGIN_FROM_WALL: f32 = 10.0;
-
-
 
 /// Number of people who are infected when starting the simulation in a community.
 ///
