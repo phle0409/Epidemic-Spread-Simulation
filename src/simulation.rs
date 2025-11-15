@@ -44,8 +44,8 @@ impl eframe::App for Simulation {
             );
 
             let rect = response.rect;
-            let border_offset_x = rect.left() + 40.0;
-            let border_offset_y = rect.top() + 40.0;
+            let border_offset_x = rect.left() + BORDER_PADDING;
+            let border_offset_y = rect.top() + BORDER_PADDING;
             ui.visuals_mut().panel_fill = egui::Color32::BLACK;
             let rect = egui::Rect::from_min_size(
                 egui::pos2(border_offset_x, border_offset_y),
@@ -57,7 +57,7 @@ impl eframe::App for Simulation {
             for person in &self.community {
                 let particle_pos =
                     egui::pos2(border_offset_x + person.x, border_offset_y + person.y);
-                painter.circle_filled(particle_pos, 4.0, person.state.person_colors());
+                painter.circle_filled(particle_pos, PERSON_RADIUS, person.state.person_colors());
             }
         });
 

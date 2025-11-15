@@ -17,6 +17,19 @@ pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 /// `1.5` pixels per frame
 pub const MOVING_SPEED: f32 = 1.25;
 
+
+/// Border padding around a community simulation area.
+///
+/// # Default Value
+/// `40.0` pixels
+pub const BORDER_PADDING: f32 = 40.0;
+
+/// The radius of a person in the simulation.
+///
+/// # Default Value
+/// `4.0` pixels
+pub const PERSON_RADIUS: f32 = 4.0;
+
 /// Creates a margin for better visibility by preventing people from getting too close to the border.
 ///
 /// # Default Value
@@ -28,3 +41,4 @@ pub const MARGIN_FROM_WALL: f32 = 10.0;
 /// # Default Value
 /// `3` infected people
 pub const INITIAL_INFECTED_PEOPLE: usize = 3; 
+
