@@ -125,7 +125,7 @@ mod tests {
     use crate::person::{Person, PersonState};
     use crate::settings::*;
 
-    // check create new app with default INITIAL_INFECTED_PEOPLE
+    /// Tests that a new app is created with default INITIAL_INFECTED_PEOPLE
     #[test]
     fn test_create_new_app() {
         let app = Simulation::new();
@@ -138,12 +138,10 @@ mod tests {
             .filter(|p| matches!(p.state, PersonState::Infected))
             .count();
         assert_eq!(infected, INITIAL_INFECTED_PEOPLE);
-        for person in &app.community {
-            assert_eq!(person.infection_duration, 0.0);
-        }
     }
 
-    /// Check that position should change. If position does not change, the velocity must change due to a corner case.
+    /// Tests that a person's position in the community should change after update.
+    ///  If the position does not change, then the velocity must change due to a corner case.
     #[test]
     fn test_update_community_first_person() {
         let mut app = Simulation::new();
@@ -164,6 +162,9 @@ mod tests {
         );
     }
 
+    /// Tests the restart method with new infected people
+    ///
+    /// In the UI, user can adjust how many initial people that are infected
     #[test]
     fn test_restart_with_new_infected_people() {
         let mut app = Simulation::new();

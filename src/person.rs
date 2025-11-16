@@ -83,17 +83,7 @@ mod tests {
     use super::*;
     use crate::settings::*;
 
-    #[test]
-    fn test_person_colors() {
-        use eframe::egui;
-        assert_eq!(PersonState::Infected.person_colors(), egui::Color32::RED);
-        assert_eq!(PersonState::Recovered.person_colors(), egui::Color32::GRAY);
-        assert_eq!(
-            PersonState::Susceptible.person_colors(),
-            egui::Color32::BLUE
-        );
-    }
-
+    /// Tests that creating a new person places them within the SIMULATION_AREA_SIZE.
     #[test]
     fn test_create_new_person() {
         let person = Person::new();
@@ -103,6 +93,8 @@ mod tests {
         assert!(person.y >= 0.0 && person.y <= SIMULATION_AREA_SIZE);
     }
 
+
+    /// Tests that the person's position is correct after moving in the community.
     #[test]
     fn test_update_position_normal() {
         let mut person = Person {
@@ -118,7 +110,8 @@ mod tests {
         assert_eq!(person.y, 22.0);
     }
 
-
+    /// Tests that a person bounces back and changes velocity x when moving to the left border.
+    /// The right, top and bottom cases use the same principle as the left border case.
     #[test]
     fn test_update_position_left_border() {
         let mut person = Person {
@@ -135,6 +128,8 @@ mod tests {
         assert_eq!(person.velocity_y, 2.0);
     }
 
+
+    /// Tests the distance calculation between two people in the community.
     #[test]
     fn test_calculate_distance() {
         let person1 = Person {
@@ -157,6 +152,7 @@ mod tests {
         assert_eq!(distance, 4.0);
     }
 
+    /// Tests the function that checks if a person is susceptible.
     #[test]
     fn test_is_susceptible() {
         let person = Person {
@@ -170,6 +166,8 @@ mod tests {
         assert!(person.is_susceptible());
     }
 
+
+    /// Tests the function that checks if a person is infected.
     #[test]
     fn test_is_infected() {
         let person = Person {
@@ -181,5 +179,17 @@ mod tests {
             infection_duration: 0.0,
         };
         assert!(person.is_infected());
+    }
+
+    /// Tests that the person state matches the corresponding color in the UI.
+    #[test]
+    fn test_person_colors() {
+        use eframe::egui;
+        assert_eq!(PersonState::Infected.person_colors(), egui::Color32::RED);
+        assert_eq!(PersonState::Recovered.person_colors(), egui::Color32::GRAY);
+        assert_eq!(
+            PersonState::Susceptible.person_colors(),
+            egui::Color32::BLUE
+        );
     }
 }

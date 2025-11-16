@@ -14,7 +14,7 @@ pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 /// it represents how many pixels per frame that all people move.
 ///
 /// # Default Value
-/// `1.5` pixels per frame
+/// `1.25` pixels per frame
 pub const MOVING_SPEED: f32 = 1.25;
 
 /// Border padding around a community simulation area.
