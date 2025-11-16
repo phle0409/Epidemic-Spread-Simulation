@@ -201,7 +201,22 @@ mod tests {
         for i in 0..100 {
             app.community[i].state = PersonState::Susceptible;
         }
-        
+
         assert!(!app.is_within_infected_radius(&app.community[1]));
+    }
+
+    /// Tests that vulnerable people are correctly identified in the community.
+    #[test]
+    fn test_find_vulnerable_people() {
+        let mut app = Simulation::new();
+        app.community[0].state = PersonState::Infected;
+        app.community[0].x = 20.0;
+        app.community[0].y = 20.0;
+        app.community[1].state = PersonState::Susceptible;
+        app.community[1].x = 21.0;
+        app.community[1].y = 22.0;
+
+        let vulnerable = app.find_vulnerable_people();
+        assert!(vulnerable.contains(&1));
     }
 }
