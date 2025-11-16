@@ -146,7 +146,7 @@ mod tests {
 
         let count = app.community
             .iter()
-            .filter(|p| matches!(p.state, PersonState::Infected))
+            .filter(|person| matches!(person.state, PersonState::Infected))
             .count();
 
         assert_eq!(count, 5);
