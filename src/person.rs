@@ -1,5 +1,5 @@
-use rand::Rng;
 use eframe::egui;
+use rand::Rng;
 
 use crate::settings::*;
 
@@ -67,6 +67,20 @@ impl Person {
             self.y = SIMULATION_AREA_SIZE - MARGIN_FROM_WALL;
         }
     }
+
+    pub fn is_susceptible(&self) -> bool {
+        matches!(self.state, PersonState::Susceptible)
+    }
+
+    pub fn is_infected(&self) -> bool {
+        matches!(self.state, PersonState::Infected)
+    }
+
+    pub fn calculate_distance(&self, other: &Person) -> f32 {
+        let dx = self.x - other.x;
+        let dy = self.y - other.y;
+        (dx * dx + dy * dy).sqrt()
+    }
 }
 
 #[cfg(test)]
@@ -80,7 +94,10 @@ mod tests {
 
         assert_eq!(PersonState::Infected.person_colors(), egui::Color32::RED);
         assert_eq!(PersonState::Recovered.person_colors(), egui::Color32::GRAY);
-        assert_eq!(PersonState::Susceptible.person_colors(), egui::Color32::BLUE);
+        assert_eq!(
+            PersonState::Susceptible.person_colors(),
+            egui::Color32::BLUE
+        );
     }
 
     #[test]
@@ -181,5 +198,57 @@ mod tests {
         assert_eq!(person.y, MARGIN_FROM_WALL);
         assert_eq!(person.velocity_x, 2.0);
         assert_eq!(person.velocity_y, 2.0);
+    }
+
+    #[test]
+    fn test_calculate_distance() {
+        let person1 = Person {
+            x: 10.0,
+            y: 20.0,
+            velocity_x: 0.0,
+            velocity_y: 0.0,
+            state: PersonState::Susceptible,
+            infection_duration: 0.0,
+        };
+
+        let person2 = Person {
+            x: 10.0,
+            y: 24.0,
+            velocity_x: 0.0,
+            velocity_y: 0.0,
+            state: PersonState::Susceptible,
+            infection_duration: 0.0,
+        };
+
+        let distance = person1.calculate_distance(&person2);
+        assert_eq!(distance, 4.0);
+    }
+
+    #[test]
+    fn test_is_susceptible() {
+        let person = Person {
+            x: 17.0,
+            y: 23.0,
+            velocity_x: 2.0,
+            velocity_y: 2.0,
+            state: PersonState::Susceptible,
+            infection_duration: 0.0,
+        };
+
+        assert!(person.is_susceptible());
+    }
+
+    #[test]
+    fn test_is_infected() {
+        let person = Person {
+            x: 17.0,
+            y: 23.0,
+            velocity_x: 2.0,
+            velocity_y: 2.0,
+            state: PersonState::Infected,
+            infection_duration: 0.0,
+        };
+
+        assert!(person.is_infected());
     }
 }

@@ -17,7 +17,6 @@ pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 /// `1.5` pixels per frame
 pub const MOVING_SPEED: f32 = 1.25;
 
-
 /// Border padding around a community simulation area.
 ///
 /// # Default Value
@@ -40,5 +39,15 @@ pub const MARGIN_FROM_WALL: f32 = 10.0;
 ///
 /// # Default Value
 /// `3` infected people
-pub const INITIAL_INFECTED_PEOPLE: usize = 3; 
+pub const INITIAL_INFECTED_PEOPLE: usize = 3;
 
+/// Infection radius - the distance within which an infected person can transmit the disease.
+/// # Default Value
+/// `4.0` pixels
+pub const INFECTION_RADIUS: f32 = 4.0;
+
+/// Probability of infection
+///
+/// # Default Value
+/// `0.3` (30% chance) range from 0.0 <= random < 0.1
+pub const INFECTION_PROBABILITY: f32 = 0.3;

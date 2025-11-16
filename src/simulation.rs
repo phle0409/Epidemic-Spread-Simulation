@@ -32,6 +32,47 @@ impl Simulation {
         for person in &mut self.community {
             person.update_position();
         }
+        self.spread_infection();
+    }
+
+    fn spread_infection(&mut self) {
+        let mut rng = rand::thread_rng();
+        let susceptibles_at_risk = self.find_susceptibles_at_risk();
+
+        for index in susceptibles_at_risk {
+            let random = rng.gen_range(0.0..1.0);
+            if random < INFECTION_PROBABILITY {
+                self.community[index].state = PersonState::Infected;
+            }
+        }
+    }
+
+    fn find_susceptibles_at_risk(&self) -> Vec<usize> {
+        let mut vulnerable_people = Vec::new();
+
+        for (index, person) in self.community.iter().enumerate() {
+            if !person.is_susceptible() {
+                continue;
+            }
+
+            if self.is_within_infected_radius(person) {
+                vulnerable_people.push(index);
+            }
+        }
+
+        vulnerable_people
+    }
+
+    fn is_within_infected_radius(&self, person: &Person) -> bool {
+        for member in &self.community {
+            if member.is_infected() {
+                let distance = person.calculate_distance(member);
+                if distance <= INFECTION_RADIUS {
+                    return true;
+                }
+            }
+        }
+        false
     }
 
     fn restart(&mut self) {
@@ -54,7 +95,10 @@ impl eframe::App for Simulation {
             ui.horizontal(|ui| {
                 ui.label(egui::RichText::new("Initial Infected:").size(15.0));
                 ui.add(egui::Slider::new(&mut self.initial_infected_count, 3..=30));
-                if ui.button(egui::RichText::new("Apply and Reset").size(15.0)).clicked() {
+                if ui
+                    .button(egui::RichText::new("Apply and Reset").size(15.0))
+                    .clicked()
+                {
                     self.restart();
                 }
             });
@@ -101,13 +145,14 @@ mod tests {
         assert_eq!(app.community_size, 100);
         assert_eq!(app.community.len(), 100);
 
-        let infected = app.community
+        let infected = app
+            .community
             .iter()
             .filter(|p| matches!(p.state, PersonState::Infected))
             .count();
 
         assert_eq!(infected, INITIAL_INFECTED_PEOPLE);
-        
+
         for person in &app.community {
             assert_eq!(person.infection_duration, 0.0);
         }
@@ -144,7 +189,8 @@ mod tests {
         app.initial_infected_count = 5;
         app.restart();
 
-        let count = app.community
+        let count = app
+            .community
             .iter()
             .filter(|person| matches!(person.state, PersonState::Infected))
             .count();
