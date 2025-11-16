@@ -136,4 +136,19 @@ mod tests {
                 || new_velocity_y != initial_velocity_y
         );
     }
+
+    #[test]
+    fn test_restart_with_new_infected_people() {
+        let mut app = Simulation::new();
+
+        app.initial_infected_count = 5;
+        app.restart();
+
+        let count = app.community
+            .iter()
+            .filter(|p| matches!(p.state, PersonState::Infected))
+            .count();
+
+        assert_eq!(count, 5);
+    }
 }
