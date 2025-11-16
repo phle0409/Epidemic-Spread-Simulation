@@ -93,7 +93,6 @@ mod tests {
         assert!(person.y >= 0.0 && person.y <= SIMULATION_AREA_SIZE);
     }
 
-
     /// Tests that the person's position is correct after moving in the community.
     #[test]
     fn test_update_position_normal() {
@@ -127,7 +126,6 @@ mod tests {
         assert_eq!(person.velocity_x, 2.0);
         assert_eq!(person.velocity_y, 2.0);
     }
-
 
     /// Tests the distance calculation between two people in the community.
     #[test]
@@ -165,7 +163,6 @@ mod tests {
         };
         assert!(person.is_susceptible());
     }
-
 
     /// Tests the function that checks if a person is infected.
     #[test]

@@ -177,4 +177,31 @@ mod tests {
             .count();
         assert_eq!(count, 5);
     }
+
+    /// Tests that true is returned when a normal person is within the radius of an infected person.
+    /// Creates an infected person in the same radius as a normal person to ensure the function returns true.
+    #[test]
+    fn test_is_within_infected_radius_true() {
+        let mut app = Simulation::new();
+        app.community[0].state = PersonState::Infected;
+        app.community[0].x = 20.0;
+        app.community[0].y = 20.0;
+        app.community[1].state = PersonState::Susceptible;
+        app.community[1].x = 21.0;
+        app.community[1].y = 22.0;
+
+        assert!(app.is_within_infected_radius(&app.community[1]));
+    }
+
+    /// Tests that false is returned when no one in the community is infected.
+    /// Creates a new community with no infected people to ensure the function returns false.
+    #[test]
+    fn test_is_within_infected_radius_false() {
+        let mut app = Simulation::new();
+        for i in 0..100 {
+            app.community[i].state = PersonState::Susceptible;
+        }
+        
+        assert!(!app.is_within_infected_radius(&app.community[1]));
+    }
 }
