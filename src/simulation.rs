@@ -8,6 +8,7 @@ pub struct Simulation {
     pub community: Vec<Person>,
     pub total_time: f32,
     pub community_size: usize,
+    pub initial_infected_count: usize,
 }
 
 impl Simulation {
@@ -15,7 +16,7 @@ impl Simulation {
         let community_size = 100;
         let mut community: Vec<Person> = (0..community_size).map(|_| Person::new()).collect();
 
-        for i in 0..INITIAL_INFECTED_PEOPLE as usize {
+        for i in 0..INITIAL_INFECTED_PEOPLE {
             community[i].state = PersonState::Infected;
         }
 
@@ -23,6 +24,7 @@ impl Simulation {
             community,
             total_time: 0.0,
             community_size,
+            initial_infected_count: INITIAL_INFECTED_PEOPLE,
         }
     }
 
@@ -31,6 +33,17 @@ impl Simulation {
             person.update_position();
         }
     }
+
+    fn restart(&mut self) {
+        let count = self.initial_infected_count;
+        self.community = (0..self.community_size).map(|_| Person::new()).collect();
+
+        for i in 0..count {
+            self.community[i].state = PersonState::Infected;
+        }
+
+        self.total_time = 0.0;
+    }
 }
 
 impl eframe::App for Simulation {
@@ -38,6 +51,15 @@ impl eframe::App for Simulation {
         self.update_community();
 
         egui::CentralPanel::default().show(ctx, |ui| {
+            ui.horizontal(|ui| {
+                ui.label(egui::RichText::new("Initial Infected:").size(15.0));
+                ui.add(egui::Slider::new(&mut self.initial_infected_count, 3..=30));
+                if ui.button(egui::RichText::new("Apply and Reset").size(15.0)).clicked() {
+                    self.restart();
+                }
+            });
+            ui.separator();
+
             let (response, painter) = ui.allocate_painter(
                 egui::vec2(SIMULATION_AREA_SIZE + 80.0, SIMULATION_AREA_SIZE + 80.0),
                 egui::Sense::hover(),
