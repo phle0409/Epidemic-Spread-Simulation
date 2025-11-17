@@ -3,11 +3,13 @@ use rand::Rng;
 
 use crate::settings::*;
 
+#[derive(PartialEq)]
 pub enum PersonState {
     Susceptible,
     Infected,
     Recovered,
 }
+
 
 impl PersonState {
     pub fn person_colors(&self) -> egui::Color32 {

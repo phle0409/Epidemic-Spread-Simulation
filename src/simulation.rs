@@ -9,6 +9,7 @@ pub struct Simulation {
     pub total_time: f32,
     pub community_size: usize,
     pub initial_infected_count: usize,
+    pub recovered_days: f32,
 }
 
 impl Simulation {
@@ -16,19 +17,30 @@ impl Simulation {
         let community_size = 100;
         let mut community: Vec<Person> = (0..community_size).map(|_| Person::new()).collect();
 
-        for i in 0..INITIAL_INFECTED_PEOPLE {
-            community[i].state = PersonState::Infected;
+        for index in 0..INITIAL_INFECTED_PEOPLE {
+            community[index].state = PersonState::Infected;
+            community[index].infection_duration = 0.0;
         }
+
         Self {
             community,
             total_time: 0.0,
             community_size,
             initial_infected_count: INITIAL_INFECTED_PEOPLE,
+            recovered_days: 10.0,
         }
     }
 
     fn update_community(&mut self) {
         for person in &mut self.community {
+            if person.state == PersonState::Infected {
+                person.infection_duration += 1.0;
+            }
+
+            if person.infection_duration >= self.recovered_days {
+                person.infection_duration = 0.0;
+                person.state = PersonState::Recovered;
+            }
             person.update_position();
         }
         self.spread_infection();
@@ -41,6 +53,7 @@ impl Simulation {
             let random = rng.gen_range(0.0..1.0);
             if random < INFECTION_PROBABILITY {
                 self.community[index].state = PersonState::Infected;
+                self.community[index].infection_duration = 0.0;
             }
         }
     }
@@ -163,7 +176,6 @@ mod tests {
     }
 
     /// Tests the restart method with new infected people
-    ///
     /// In the UI, user can adjust how many initial people that are infected
     #[test]
     fn test_restart_with_new_infected_people() {
