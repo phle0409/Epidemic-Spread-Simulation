@@ -10,11 +10,12 @@ pub struct Simulation {
     pub community_size: usize,
     pub initial_infected_count: usize,
     pub recovered_days: f32,
+    pub infected_radius: f32,
 }
 
 impl Simulation {
     pub fn new() -> Self {
-        let community_size = 100;
+        let community_size = 80;
         let mut community: Vec<Person> = (0..community_size).map(|_| Person::new()).collect();
 
         for index in 0..INITIAL_INFECTED_PEOPLE {
@@ -28,6 +29,7 @@ impl Simulation {
             community_size,
             initial_infected_count: INITIAL_INFECTED_PEOPLE,
             recovered_days: 7.0,
+            infected_radius: 3.0,
         }
     }
 
@@ -75,7 +77,7 @@ impl Simulation {
         for member in &self.community {
             if member.is_infected() {
                 let distance = person.calculate_distance(member);
-                if distance <= INFECTION_RADIUS {
+                if distance <= self.infected_radius {
                     return true;
                 }
             }
@@ -99,12 +101,25 @@ impl eframe::App for Simulation {
         self.update_community(time_frame_per_second);
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.label(egui::RichText::new("Initial Infected:").size(15.0));
-                ui.add(egui::Slider::new(&mut self.initial_infected_count, 3..=30));
-                if ui
-                    .button(egui::RichText::new("Apply and Reset").size(15.0))
-                    .clicked()
-                {
+                ui.vertical(|ui| {
+                    ui.horizontal(|ui| {
+                        ui.label(egui::RichText::new("Community size:").size(15.0));
+                        ui.add(egui::Slider::new(&mut self.community_size, 20..=150));
+                    });
+
+                    ui.horizontal(|ui| {
+                        ui.label(egui::RichText::new("Initial Infected:").size(15.0));
+                        ui.add(egui::Slider::new(&mut self.initial_infected_count, 3..=30));
+                    });
+
+                    ui.horizontal(|ui| {
+                        ui.label(egui::RichText::new("Infected Radius:").size(15.0));
+                        ui.add(egui::Slider::new(&mut self.infected_radius, 1.0..=8.0));
+                    });
+                });
+
+                let reset_button = ui.button(egui::RichText::new("Apply and Reset").size(15.0));
+                if reset_button.clicked() {
                     self.restart();
                 }
             });

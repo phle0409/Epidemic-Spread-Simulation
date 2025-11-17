@@ -41,11 +41,6 @@ pub const MARGIN_FROM_WALL: f32 = 10.0;
 /// `3` infected people
 pub const INITIAL_INFECTED_PEOPLE: usize = 3;
 
-/// Infection radius - the distance within which an infected person can transmit the disease.
-/// # Default Value
-/// `4.0` pixels
-pub const INFECTION_RADIUS: f32 = 4.0;
-
 /// Probability of infection
 ///
 /// # Default Value
