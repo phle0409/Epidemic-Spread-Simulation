@@ -195,7 +195,6 @@ mod tests {
     #[test]
     fn test_is_within_infected_radius_true() {
         let mut app = Simulation::new();
-        app.community[0].state = PersonState::Infected;
         app.community[0].x = 20.0;
         app.community[0].y = 20.0;
         app.community[1].state = PersonState::Susceptible;
@@ -210,9 +209,14 @@ mod tests {
     #[test]
     fn test_is_within_infected_radius_false() {
         let mut app = Simulation::new();
-        for i in 0..100 {
-            app.community[i].state = PersonState::Susceptible;
+        app.community[0].x = 20.0;
+        app.community[0].y = 20.0;
+        for index in 1..3 {
+             app.community[index].state = PersonState::Susceptible;
         }
+        app.community[0].x = 80.0;
+        app.community[0].y = 80.0;
+
 
         assert!(!app.is_within_infected_radius(&app.community[1]));
     }
@@ -221,7 +225,6 @@ mod tests {
     #[test]
     fn test_find_vulnerable_people() {
         let mut app = Simulation::new();
-        app.community[0].state = PersonState::Infected;
         app.community[0].x = 20.0;
         app.community[0].y = 20.0;
         app.community[1].state = PersonState::Susceptible;
