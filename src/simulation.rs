@@ -27,14 +27,14 @@ impl Simulation {
             total_time: 0.0,
             community_size,
             initial_infected_count: INITIAL_INFECTED_PEOPLE,
-            recovered_days: 5.0,
+            recovered_days: 7.0,
         }
     }
 
-    fn update_community(&mut self) {
+    fn update_community(&mut self, time_frame_per_second: f32) {
         for person in &mut self.community {
             if person.state == PersonState::Infected {
-                person.infection_duration += 1.0 / 60.0;
+                person.infection_duration += time_frame_per_second;
             }
 
             if person.infection_duration >= self.recovered_days {
@@ -95,7 +95,8 @@ impl Simulation {
 
 impl eframe::App for Simulation {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        self.update_community();
+        let time_frame_per_second: f32 = ctx.input(|i| i.stable_dt);
+        self.update_community(time_frame_per_second);
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
                 ui.label(egui::RichText::new("Initial Infected:").size(15.0));
