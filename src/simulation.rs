@@ -27,14 +27,14 @@ impl Simulation {
             total_time: 0.0,
             community_size,
             initial_infected_count: INITIAL_INFECTED_PEOPLE,
-            recovered_days: 10.0,
+            recovered_days: 5.0,
         }
     }
 
     fn update_community(&mut self) {
         for person in &mut self.community {
             if person.state == PersonState::Infected {
-                person.infection_duration += 1.0;
+                person.infection_duration += 1.0 / 60.0;
             }
 
             if person.infection_duration >= self.recovered_days {
