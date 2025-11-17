@@ -10,7 +10,6 @@ pub enum PersonState {
     Recovered,
 }
 
-
 impl PersonState {
     pub fn person_colors(&self) -> egui::Color32 {
         match self {
@@ -83,7 +82,6 @@ impl Person {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::settings::*;
 
     /// Tests that creating a new person places them within the SIMULATION_AREA_SIZE.
     #[test]

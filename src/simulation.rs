@@ -35,12 +35,12 @@ impl Simulation {
         for person in &mut self.community {
             if person.state == PersonState::Infected {
                 person.infection_duration += time_frame_per_second;
+                if person.infection_duration >= self.recovered_days {
+                    person.infection_duration = 0.0;
+                    person.state = PersonState::Recovered;
+                }
             }
 
-            if person.infection_duration >= self.recovered_days {
-                person.infection_duration = 0.0;
-                person.state = PersonState::Recovered;
-            }
             person.update_position();
         }
         self.spread_infection();
@@ -136,8 +136,7 @@ impl eframe::App for Simulation {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::person::{Person, PersonState};
-    use crate::settings::*;
+    use crate::person::PersonState;
 
     /// Tests that a new app is created with default INITIAL_INFECTED_PEOPLE
     #[test]
@@ -157,13 +156,13 @@ mod tests {
     /// Tests that a person's position in the community should change after update.
     ///  If the position does not change, then the velocity must change due to a corner case.
     #[test]
-    fn test_update_community_first_person() {
+    fn test_update_community_first_person_position() {
         let mut app = Simulation::new();
         let initial_x = app.community[0].x;
         let initial_y = app.community[0].y;
         let initial_velocity_x = app.community[0].velocity_x;
         let initial_velocity_y = app.community[0].velocity_y;
-        app.update_community();
+        app.update_community(1.0);
         let new_position_x = app.community[0].x;
         let new_position_y = app.community[0].y;
         let new_velocity_x = app.community[0].velocity_x;
