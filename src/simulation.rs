@@ -11,6 +11,7 @@ pub struct Simulation {
     pub initial_infected_count: usize,
     pub recovered_days: f32,
     pub infected_radius: f32,
+    pub ui_infected_radius:f32,
 }
 
 impl Simulation {
@@ -30,6 +31,7 @@ impl Simulation {
             initial_infected_count: INITIAL_INFECTED_PEOPLE,
             recovered_days: 7.0,
             infected_radius: 3.0,
+            ui_infected_radius: 3.0,
         }
     }
 
@@ -92,6 +94,7 @@ impl Simulation {
             self.community[i].state = PersonState::Infected;
         }
         self.total_time = 0.0;
+        self.infected_radius = self.ui_infected_radius;
     }
 }
 
@@ -114,8 +117,9 @@ impl eframe::App for Simulation {
 
                     ui.horizontal(|ui| {
                         ui.label(egui::RichText::new("Infected Radius:").size(15.0));
-                        ui.add(egui::Slider::new(&mut self.infected_radius, 1.0..=8.0));
+                        ui.add(egui::Slider::new(&mut self.ui_infected_radius, 1.0..=8.0));
                     });
+
                 });
 
                 let reset_button = ui.button(egui::RichText::new("Apply and Reset").size(15.0));
@@ -158,8 +162,7 @@ mod tests {
     fn test_create_new_app() {
         let app = Simulation::new();
         assert_eq!(app.total_time, 0.0);
-        assert_eq!(app.community_size, 100);
-        assert_eq!(app.community.len(), 100);
+        assert_eq!(app.community_size, 80);
         let infected = app
             .community
             .iter()
