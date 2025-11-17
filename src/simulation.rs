@@ -212,11 +212,10 @@ mod tests {
         app.community[0].x = 20.0;
         app.community[0].y = 20.0;
         for index in 1..3 {
-             app.community[index].state = PersonState::Susceptible;
+            app.community[index].state = PersonState::Susceptible;
         }
         app.community[0].x = 80.0;
         app.community[0].y = 80.0;
-
 
         assert!(!app.is_within_infected_radius(&app.community[1]));
     }
@@ -233,5 +232,15 @@ mod tests {
 
         let vulnerable = app.find_vulnerable_people();
         assert!(vulnerable.contains(&1));
+    }
+
+    /// Tests that a infected person will be recorved after 7 days
+    #[test]
+    fn test_community_update_recovered_person() {
+        let mut app = Simulation::new();
+        app.update_community(6.0);
+        assert!(matches!(app.community[0].state, PersonState::Infected));
+        app.update_community(1.0);
+        assert!(matches!(app.community[0].state, PersonState::Recovered));
     }
 }
