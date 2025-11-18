@@ -19,9 +19,9 @@ impl Simulation {
         let community_size = 80;
         let mut community: Vec<Person> = (0..community_size).map(|_| Person::new()).collect();
 
-        for index in 0..INITIAL_INFECTED_PEOPLE {
-            community[index].state = PersonState::Infected;
-            community[index].infection_duration = 0.0;
+        for person in community.iter_mut().take(INITIAL_INFECTED_PEOPLE) {
+            person.state = PersonState::Infected;
+            person.infection_duration = 0.0;
         }
 
         Self {
@@ -90,8 +90,8 @@ impl Simulation {
     fn restart(&mut self) {
         let count = self.initial_infected_count;
         self.community = (0..self.community_size).map(|_| Person::new()).collect();
-        for i in 0..count {
-            self.community[i].state = PersonState::Infected;
+        for person in self.community.iter_mut().take(count) {
+            person.state = PersonState::Infected;
         }
         self.total_time = 0.0;
         self.infected_radius = self.ui_infected_radius;
@@ -112,12 +112,12 @@ impl eframe::App for Simulation {
 
                     ui.horizontal(|ui| {
                         ui.label(egui::RichText::new("Initial Infected:").size(15.0));
-                        ui.add(egui::Slider::new(&mut self.initial_infected_count, 3..=30));
+                        ui.add(egui::Slider::new(&mut self.initial_infected_count, 1..=30));
                     });
 
                     ui.horizontal(|ui| {
                         ui.label(egui::RichText::new("Infected Radius:").size(15.0));
-                        ui.add(egui::Slider::new(&mut self.ui_infected_radius, 1.0..=8.0));
+                        ui.add(egui::Slider::new(&mut self.ui_infected_radius, 1.0..=16.0));
                     });
 
                 });
