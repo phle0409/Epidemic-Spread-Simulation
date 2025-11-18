@@ -88,11 +88,11 @@ impl Simulation {
     }
 
     fn restart(&mut self) {
-        let count = self.initial_infected_count;
         self.community = (0..self.community_size).map(|_| Person::new()).collect();
-        for person in self.community.iter_mut().take(count) {
-            person.state = PersonState::Infected;
+        for i in 0..self.initial_infected_count {
+            self.community[i].state = PersonState::Infected;
         }
+
         self.total_time = 0.0;
         self.infected_radius = self.ui_infected_radius;
     }
