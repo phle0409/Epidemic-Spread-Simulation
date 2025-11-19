@@ -6,32 +6,37 @@ use crate::settings::*;
 
 pub struct Simulation {
     pub community: Vec<Person>,
-    pub total_time: f32,
+    pub total_time: Vec<f32>,
     pub community_size: usize,
     pub initial_infected_count: usize,
     pub recovered_days: f32,
     pub infected_radius: f32,
     pub ui_infected_radius:f32,
+    pub infected_chart: Vec<f32>,
 }
 
 impl Simulation {
     pub fn new() -> Self {
         let community_size = 80;
         let mut community: Vec<Person> = (0..community_size).map(|_| Person::new()).collect();
-
         for person in community.iter_mut().take(INITIAL_INFECTED_PEOPLE) {
             person.state = PersonState::Infected;
             person.infection_duration = 0.0;
         }
+        let mut total_time = Vec::new();
+        let mut infected_chart = Vec::new();
 
+        total_time.push(0.0);
+        infected_chart.push((INITIAL_INFECTED_PEOPLE as f32 / community_size as f32)*100.0);
         Self {
             community,
-            total_time: 0.0,
+            total_time,
             community_size,
             initial_infected_count: INITIAL_INFECTED_PEOPLE,
             recovered_days: 7.0,
             infected_radius: 3.0,
             ui_infected_radius: 3.0,
+            infected_chart,
         }
     }
 
@@ -93,8 +98,20 @@ impl Simulation {
             self.community[i].state = PersonState::Infected;
         }
 
-        self.total_time = 0.0;
-        self.infected_radius = self.ui_infected_radius;
+        self.total_time.clear();
+        self.total_time.push(0.0);
+        
+    }
+
+    fn update_chart(&mut self, time_frame_per_second: f32) {
+        let total_people = self.community.len() as f32;
+                if let Some(&last) = self.total_time.last() {
+            self.total_time.push(last + time_frame_per_second);
+        }
+
+        let current_infected = self.community.iter().filter(|p| matches!(p.state, PersonState::Susceptible)).count() as f32;
+        self.infected_chart.push((current_infected / total_people) * 100.0);
+
     }
 }
 
@@ -102,6 +119,7 @@ impl eframe::App for Simulation {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let time_frame_per_second: f32 = ctx.input(|i| i.stable_dt);
         self.update_community(time_frame_per_second);
+        self.update_chart(time_frame_per_second);
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
                 ui.vertical(|ui| {
