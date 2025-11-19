@@ -162,9 +162,11 @@ impl eframe::App for Simulation {
                             .background_alpha(0.8),
                     )
                     .show(ui, |plot_ui| {
+
+                        // Infected chart
                         let last_infected_percentage = match self.infected_chart.last() {
                             Some(&value) => value,
-                            None => 0.0, // Should not occur as chart is populated in new()
+                            None => 0.0,
                         };
                         let infected_points: PlotPoints = self
                             .total_time
