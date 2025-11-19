@@ -156,9 +156,16 @@ impl eframe::App for Simulation {
                     .y_axis_label("Percentage")
                     .include_y(0.0)
                     .include_y(100.0)
-                    .legend(egui_plot::Legend::default().position(egui_plot::Corner::RightTop).background_alpha(0.8))
+                    .legend(
+                        egui_plot::Legend::default()
+                            .position(egui_plot::Corner::RightTop)
+                            .background_alpha(0.8),
+                    )
                     .show(ui, |plot_ui| {
-                        let latest_infected = self.infected_chart.last().copied().unwrap_or(0.0);
+                        let last_infected_percentage = match self.infected_chart.last() {
+                            Some(&value) => value,
+                            None => 0.0, // Should not occur as chart is populated in new()
+                        };
                         let infected_points: PlotPoints = self
                             .total_time
                             .iter()
@@ -169,7 +176,7 @@ impl eframe::App for Simulation {
                         plot_ui.line(
                             Line::new(infected_points)
                                 .color(egui::Color32::RED)
-                                .name(format!("{:.1}% infected", latest_infected))
+                                .name(format!("{:.1}% infected", last_infected_percentage))
                                 .fill(0.0),
                         );
                     });
