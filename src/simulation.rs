@@ -1,4 +1,5 @@
 use eframe::egui;
+use egui_plot::{Line, Plot, PlotPoints};
 use rand::Rng;
 
 use crate::person::{Person, PersonState};
@@ -11,7 +12,7 @@ pub struct Simulation {
     pub initial_infected_count: usize,
     pub recovered_days: f32,
     pub infected_radius: f32,
-    pub ui_infected_radius:f32,
+    pub ui_infected_radius: f32,
     pub infected_chart: Vec<f32>,
 }
 
@@ -27,7 +28,7 @@ impl Simulation {
         let mut infected_chart = Vec::new();
 
         total_time.push(0.0);
-        infected_chart.push((INITIAL_INFECTED_PEOPLE as f32 / community_size as f32)*100.0);
+        infected_chart.push((INITIAL_INFECTED_PEOPLE as f32 / community_size as f32) * 100.0);
         Self {
             community,
             total_time,
@@ -100,18 +101,21 @@ impl Simulation {
 
         self.total_time.clear();
         self.total_time.push(0.0);
-        
     }
 
     fn update_chart(&mut self, time_frame_per_second: f32) {
         let total_people = self.community.len() as f32;
-                if let Some(&last) = self.total_time.last() {
+        if let Some(&last) = self.total_time.last() {
             self.total_time.push(last + time_frame_per_second);
         }
 
-        let current_infected = self.community.iter().filter(|p| matches!(p.state, PersonState::Susceptible)).count() as f32;
-        self.infected_chart.push((current_infected / total_people) * 100.0);
-
+        let current_infected = self
+            .community
+            .iter()
+            .filter(|p| matches!(p.state, PersonState::Infected))
+            .count() as f32;
+        self.infected_chart
+            .push((current_infected / total_people) * 100.0);
     }
 }
 
@@ -137,7 +141,6 @@ impl eframe::App for Simulation {
                         ui.label(egui::RichText::new("Infected Radius:").size(15.0));
                         ui.add(egui::Slider::new(&mut self.ui_infected_radius, 1.0..=16.0));
                     });
-
                 });
 
                 let reset_button = ui.button(egui::RichText::new("Apply and Reset").size(15.0));
@@ -145,6 +148,33 @@ impl eframe::App for Simulation {
                     self.restart();
                 }
             });
+            ui.separator();
+            if !self.total_time.is_empty() {
+                Plot::new("SIR chart")
+                    .height(350.0)
+                    .x_axis_label("Time")
+                    .y_axis_label("Percentage")
+                    .include_y(0.0)
+                    .include_y(100.0)
+                    .legend(egui_plot::Legend::default().position(egui_plot::Corner::RightTop).background_alpha(0.8))
+                    .show(ui, |plot_ui| {
+                        let latest_infected = self.infected_chart.last().copied().unwrap_or(0.0);
+                        let infected_points: PlotPoints = self
+                            .total_time
+                            .iter()
+                            .zip(self.infected_chart.iter())
+                            .map(|(t, i)| [*t as f64, *i as f64])
+                            .collect();
+
+                        plot_ui.line(
+                            Line::new(infected_points)
+                                .color(egui::Color32::RED)
+                                .name(format!("{:.1}% infected", latest_infected))
+                                .fill(0.0),
+                        );
+                    });
+            }
+
             ui.separator();
             let (response, painter) = ui.allocate_painter(
                 egui::vec2(SIMULATION_AREA_SIZE + 80.0, SIMULATION_AREA_SIZE + 80.0),
