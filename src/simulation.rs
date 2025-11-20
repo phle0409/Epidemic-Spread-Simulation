@@ -14,6 +14,7 @@ pub struct Simulation {
     pub infected_radius: f32,
     pub ui_infected_radius: f32,
     pub infected_chart: Vec<f32>,
+    pub susceptible_chart: Vec<f32>,
 }
 
 impl Simulation {
@@ -26,9 +27,11 @@ impl Simulation {
         }
         let mut total_time = Vec::new();
         let mut infected_chart = Vec::new();
+        let mut susceptible_chart = Vec::new();
 
         total_time.push(0.0);
         infected_chart.push((INITIAL_INFECTED_PEOPLE as f32 / community_size as f32) * 100.0);
+        susceptible_chart.push(((community_size - INITIAL_INFECTED_PEOPLE) as f32 / community_size as f32) * 100.0);
         Self {
             community,
             total_time,
@@ -38,6 +41,7 @@ impl Simulation {
             infected_radius: 3.0,
             ui_infected_radius: 3.0,
             infected_chart,
+            susceptible_chart,
         }
     }
 
@@ -112,10 +116,18 @@ impl Simulation {
         let current_infected = self
             .community
             .iter()
-            .filter(|p| matches!(p.state, PersonState::Infected))
+            .filter(|person| matches!(person.state, PersonState::Infected))
             .count() as f32;
         self.infected_chart
             .push((current_infected / total_people) * 100.0);
+
+        let current_susceptible = self
+            .community
+            .iter()
+            .filter(|person| matches!(person.state, PersonState::Susceptible))
+            .count() as f32;
+        self.susceptible_chart
+            .push((current_susceptible / total_people) * 100.0);
     }
 }
 
@@ -165,20 +177,39 @@ impl eframe::App for Simulation {
 
                         // Infected chart
                         let last_infected_percentage = match self.infected_chart.last() {
-                            Some(&value) => value,
+                            Some(&percentage) => percentage,
                             None => 0.0,
                         };
                         let infected_points: PlotPoints = self
                             .total_time
                             .iter()
                             .zip(self.infected_chart.iter())
-                            .map(|(t, i)| [*t as f64, *i as f64])
+                            .map(|(time, percentage)| [*time as f64, *percentage as f64])
                             .collect();
 
                         plot_ui.line(
                             Line::new(infected_points)
                                 .color(egui::Color32::RED)
                                 .name(format!("{:.1}% infected", last_infected_percentage))
+                                .fill(0.0),
+                        );
+
+                        // Susceptible chart
+                         let last_susceptible_percentage = match self.susceptible_chart.last() {
+                            Some(&percentage) => percentage,
+                            None => 0.0,
+                        };
+                        let susceptible_points: PlotPoints = self
+                            .total_time
+                            .iter()
+                            .zip(self.susceptible_chart.iter())
+                            .map(|(time, percentage)| [*time as f64, *percentage as f64])
+                            .collect();
+
+                        plot_ui.line(
+                            Line::new(susceptible_points)
+                                .color(egui::Color32::BLUE)
+                                .name(format!("{:.1}% Susceptible", last_susceptible_percentage))
                                 .fill(0.0),
                         );
                     });
