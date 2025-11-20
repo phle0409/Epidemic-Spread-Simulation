@@ -104,13 +104,24 @@ impl Simulation {
     }
 
     fn restart(&mut self) {
+        self.infected_radius = self.ui_infected_radius;
         self.community = (0..self.community_size).map(|_| Person::new()).collect();
         for i in 0..self.initial_infected_count {
             self.community[i].state = PersonState::Infected;
+            self.community[i].infection_duration = 0.0;
         }
 
         self.total_time.clear();
+        self.infected_chart.clear();
+        self.susceptible_chart.clear();
+        self.recovered_chart.clear();
         self.total_time.push(0.0);
+
+        self.infected_chart.push((self.initial_infected_count as f32 / self.community_size as f32) * 100.0);
+        self.susceptible_chart.push(
+            ((self.community_size - self.initial_infected_count) as f32 / self.community_size as f32) * 100.0,
+        );
+        self.recovered_chart.push(0.0);
     }
 
     fn update_chart(&mut self, time_frame_per_second: f32) {
