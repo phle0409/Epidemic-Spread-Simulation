@@ -180,11 +180,12 @@ impl eframe::App for Simulation {
                             Some(&percentage) => percentage,
                             None => 0.0,
                         };
-                        let infected_points: PlotPoints = self
-                            .total_time
-                            .iter()
-                            .zip(self.infected_chart.iter())
-                            .map(|(time, percentage)| [*time as f64, *percentage as f64])
+                        let infected_points: PlotPoints = (0..self.total_time.len())
+                            .map(|i| {
+                                let time = self.total_time[i];
+                                let infected_percentage = self.infected_chart[i];
+                                [time as f64, infected_percentage as f64]
+                            })
                             .collect();
 
                         plot_ui.line(
@@ -199,11 +200,13 @@ impl eframe::App for Simulation {
                             Some(&percentage) => percentage,
                             None => 0.0,
                         };
-                        let susceptible_points: PlotPoints = self
-                            .total_time
-                            .iter()
-                            .zip(self.susceptible_chart.iter())
-                            .map(|(time, percentage)| [*time as f64, *percentage as f64])
+                        let susceptible_points: PlotPoints = (0..self.total_time.len())
+                            .map(|i| {
+                                let time = self.total_time[i];
+                                let susceptible_percentage = self.susceptible_chart[i];
+                                let infected_percentage = self.infected_chart[i];
+                                [time as f64, (infected_percentage + susceptible_percentage) as f64]
+                            })
                             .collect();
 
                         plot_ui.line(
