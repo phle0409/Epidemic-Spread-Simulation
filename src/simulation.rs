@@ -117,9 +117,12 @@ impl Simulation {
         self.recovered_chart.clear();
         self.total_time.push(0.0);
 
-        self.infected_chart.push((self.initial_infected_count as f32 / self.community_size as f32) * 100.0);
+        self.infected_chart
+            .push((self.initial_infected_count as f32 / self.community_size as f32) * 100.0);
         self.susceptible_chart.push(
-            ((self.community_size - self.initial_infected_count) as f32 / self.community_size as f32) * 100.0,
+            ((self.community_size - self.initial_infected_count) as f32
+                / self.community_size as f32)
+                * 100.0,
         );
         self.recovered_chart.push(0.0);
     }
@@ -345,6 +348,8 @@ mod tests {
     fn test_restart_with_new_infected_people() {
         let mut app = Simulation::new();
         app.initial_infected_count = 5;
+        app.community_size = 80;
+        app.ui_infected_radius = 6.0;
         app.restart();
         let count = app
             .community
@@ -352,6 +357,13 @@ mod tests {
             .filter(|person| matches!(person.state, PersonState::Infected))
             .count();
         assert_eq!(count, 5);
+        assert_eq!(app.community.len(), 80);
+        assert_eq!(app.infected_radius, 6.0);
+        assert_eq!(app.recovered_chart[0], 0.0);
+        let first_infected_percentage = (5.0 / 80.0) * 100.0;
+        let first_susceptible_percentage = (75.0 / 80.0) * 100.0;
+        assert_eq!(app.infected_chart[0], first_infected_percentage);
+        assert_eq!(app.susceptible_chart[0], first_susceptible_percentage);
     }
 
     /// Tests that true is returned when a normal person is within the radius of an infected person.
