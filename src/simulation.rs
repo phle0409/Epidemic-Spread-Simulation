@@ -296,7 +296,7 @@ mod tests {
     #[test]
     fn test_create_new_app() {
         let app = Simulation::new();
-        assert_eq!(app.total_time, 0.0);
+        assert_eq!(app.total_time[0], 0.0);
         assert_eq!(app.community_size, 80);
         let infected = app
             .community
