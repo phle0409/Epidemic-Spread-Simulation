@@ -18,7 +18,6 @@ pub struct Simulation {
     pub recovered_chart: Vec<f32>,
     pub social_distancing_radius: f32,
     pub social_distancing_enabled: bool,
-    pub social_distancing_compliance: f32,
 }
 
 impl Simulation {
@@ -51,33 +50,19 @@ impl Simulation {
             infected_chart,
             susceptible_chart,
             recovered_chart,
-            social_distancing_radius: 5.0,
+            social_distancing_radius: 20.0,
             social_distancing_enabled: false,
-            social_distancing_compliance: 0.0,
-        }
-    }
-
-    fn social_distancing(&mut self) {
-        if self.social_distancing_enabled {
-            let mut rng = rand::thread_rng();
-            let mut forces = Vec::new();
-
-            for i in 0..self.community.len() {
-                let follows_distancing = rng.gen_range(0.0..100.0) < self.social_distancing_compliance;
-
-                if follows_distancing {
-                    forces.push(self.calculate_social_distancing_force(i));
-                } else {
-                    forces.push((0.0, 0.0));
-                }
-            }
-
-            self.apply_forces(forces);
         }
     }
 
     fn update_community(&mut self, time_frame_per_second: f32) {
-        self.social_distancing();
+        if self.social_distancing_enabled {
+            let mut forces = Vec::new();
+            for i in 0..self.community.len() {
+                forces.push(self.calculate_social_distancing_force(i));
+            }
+            self.apply_forces(forces);
+        }
 
         for person in &mut self.community {
             if person.state == PersonState::Infected {
@@ -274,7 +259,7 @@ impl eframe::App for Simulation {
                 ui.label(egui::RichText::new("Radius:").size(15.0));
                 ui.add_enabled(
                     self.social_distancing_enabled,
-                    egui::Slider::new(&mut self.social_distancing_radius, 3.0..=50.0),
+                    egui::Slider::new(&mut self.social_distancing_radius, 0.0..=50.0),
                 );
             });
 
