@@ -463,7 +463,6 @@ mod tests {
         assert!(matches!(app.community[0].state, PersonState::Recovered));
     }
 
-
     /// Tests that the social distancing force calculation pushes people away from each other.
     #[test]
     fn test_calculate_social_distancing_force() {
@@ -489,5 +488,24 @@ mod tests {
         let (fx, fy) = app.calculate_social_distancing_force(0);
         assert!(fx < 0.0);
         assert!(fy > 0.0);
+    }
+
+    /// Tests that forces are correctly applied to person velocities.
+    #[test]
+    fn test_apply_forces() {
+        let mut app = Simulation::new();
+        app.community.clear();
+        app.community.push(Person {
+            x: 50.0,
+            y: 50.0,
+            velocity_x: 0.0,
+            velocity_y: 0.0,
+            state: PersonState::Susceptible,
+            infection_duration: 0.0,
+        });
+        let forces = vec![(1.0, -1.0)];
+        app.apply_forces(forces);
+        assert_eq!(app.community[0].velocity_x, 0.25);
+        assert_eq!(app.community[0].velocity_y, -0.25);
     }
 }
