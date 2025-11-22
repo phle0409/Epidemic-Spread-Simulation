@@ -17,6 +17,8 @@ pub struct Simulation {
     pub susceptible_chart: Vec<f32>,
     pub recovered_chart: Vec<f32>,
     pub social_distancing_radius: f32,
+    pub social_distancing_enabled: bool,
+    pub social_distancing_compliance: f32,
 }
 
 impl Simulation {
@@ -44,22 +46,25 @@ impl Simulation {
             community_size,
             initial_infected_count: INITIAL_INFECTED_PEOPLE,
             recovered_days: 7.0,
-            infected_radius: 3.0,
-            ui_infected_radius: 3.0,
+            infected_radius: 3.5,
+            ui_infected_radius: 3.5,
             infected_chart,
             susceptible_chart,
             recovered_chart,
-            social_distancing_radius: 50.0,
+            social_distancing_radius: 5.0,
+            social_distancing_enabled: false,
+            social_distancing_compliance: 100.0,
         }
     }
 
     fn update_community(&mut self, time_frame_per_second: f32) {
-        let mut forces = Vec::new();
-        for i in 0..self.community.len() {
-            forces.push(self.calculate_social_distancing_force(i));
+        if self.social_distancing_enabled {
+            let mut forces = Vec::new();
+            for i in 0..self.community.len() {
+                forces.push(self.calculate_social_distancing_force(i));
+            }
+            self.apply_forces(forces);
         }
-        self.apply_forces(forces);
-
         for person in &mut self.community {
             if person.state == PersonState::Infected {
                 person.infection_duration += time_frame_per_second;
@@ -208,6 +213,7 @@ impl eframe::App for Simulation {
         self.update_community(time_frame_per_second);
         self.update_chart(time_frame_per_second);
         egui::CentralPanel::default().show(ctx, |ui| {
+            ui.label(egui::RichText::new("Basic Settings").size(18.0).strong());
             ui.horizontal(|ui| {
                 ui.vertical(|ui| {
                     ui.horizontal(|ui| {
@@ -231,6 +237,33 @@ impl eframe::App for Simulation {
                     self.restart();
                 }
             });
+
+            ui.separator();
+            ui.label(
+                egui::RichText::new("Prevention Methods")
+                    .size(18.0)
+                    .strong(),
+            );
+
+            ui.label(
+                egui::RichText::new("Social Distancing")
+                    .size(16.0)
+                    .underline(),
+            );
+
+            ui.horizontal(|ui| {
+                ui.label(egui::RichText::new("Enable:").size(15.0));
+                ui.checkbox(&mut self.social_distancing_enabled, "");
+            });
+
+            ui.horizontal(|ui| {
+                ui.label(egui::RichText::new("Radius:").size(15.0));
+                ui.add_enabled(
+                    self.social_distancing_enabled,
+                    egui::Slider::new(&mut self.social_distancing_radius, 3.0..=50.0),
+                );
+            });
+
             ui.separator();
             if !self.total_time.is_empty() {
                 Plot::new("SIR chart")
