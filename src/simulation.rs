@@ -18,7 +18,6 @@ pub struct Simulation {
     pub recovered_chart: Vec<f32>,
     pub social_distancing_radius: f32,
     pub social_distancing_enabled: bool,
-    pub social_distancing_compliance: f32,
 }
 
 impl Simulation {
