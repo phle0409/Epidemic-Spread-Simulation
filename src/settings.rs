@@ -46,3 +46,9 @@ pub const INITIAL_INFECTED_PEOPLE: usize = 3;
 /// # Default Value
 /// `0.3` (30% chance) range from 0.0 <= random < 0.1
 pub const INFECTION_PROBABILITY: f32 = 0.3;
+
+/// Maximum speed to prevent people from moving too fast when social distancing is enabled.
+///
+/// # Default Value
+/// `2.5` pixels per frame
+pub const SOCIAL_DISTANCING_MAX_SPEED: f32 = 1.75;

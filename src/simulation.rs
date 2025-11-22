@@ -16,6 +16,7 @@ pub struct Simulation {
     pub infected_chart: Vec<f32>,
     pub susceptible_chart: Vec<f32>,
     pub recovered_chart: Vec<f32>,
+    pub social_distancing_radius: f32,
 }
 
 impl Simulation {
@@ -48,10 +49,17 @@ impl Simulation {
             infected_chart,
             susceptible_chart,
             recovered_chart,
+            social_distancing_radius: 30.0,
         }
     }
 
     fn update_community(&mut self, time_frame_per_second: f32) {
+        let mut forces = Vec::new();
+        for i in 0..self.community.len() {
+            forces.push(self.calculate_social_distancing_force(i));
+        }
+        self.apply_forces(forces);
+
         for person in &mut self.community {
             if person.state == PersonState::Infected {
                 person.infection_duration += time_frame_per_second;
@@ -156,6 +164,41 @@ impl Simulation {
             .count() as f32;
         self.recovered_chart
             .push((current_recovered / total_people) * 100.0);
+    }
+
+    fn calculate_social_distancing_force(&self, own_index: usize) -> (f32, f32) {
+        let mut x = 0.0;
+        let mut y = 0.0;
+        let person = &self.community[own_index];
+        for (index, other) in self.community.iter().enumerate() {
+            if index == own_index {
+                continue;
+            }
+            let distance = person.calculate_distance(other);
+            if distance < self.social_distancing_radius && distance > 0.0 {
+                let dx = person.x - other.x;
+                let dy = person.y - other.y;
+                let strength =
+                    (self.social_distancing_radius - distance) / self.social_distancing_radius;
+                x += (dx / distance) * strength;
+                y += (dy / distance) * strength;
+            }
+        }
+        (x, y)
+    }
+
+    fn apply_forces(&mut self, forces: Vec<(f32, f32)>) {
+        for (person, (fx, fy)) in self.community.iter_mut().zip(forces.iter()) {
+            person.velocity_x += fx * 0.1;
+            person.velocity_y += fy * 0.1;
+            let speed = (person.velocity_x * person.velocity_x
+                + person.velocity_y * person.velocity_y)
+                .sqrt();
+            if speed > SOCIAL_DISTANCING_MAX_SPEED {
+                person.velocity_x = (person.velocity_x / speed) * SOCIAL_DISTANCING_MAX_SPEED;
+                person.velocity_y = (person.velocity_y / speed) * SOCIAL_DISTANCING_MAX_SPEED;
+            }
+        }
     }
 }
 
