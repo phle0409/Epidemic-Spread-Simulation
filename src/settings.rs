@@ -51,4 +51,4 @@ pub const INFECTION_PROBABILITY: f32 = 0.3;
 ///
 /// # Default Value
 /// `2.5` pixels per frame
-pub const SOCIAL_DISTANCING_MAX_SPEED: f32 = 1.75;
+pub const SOCIAL_DISTANCING_MAX_SPEED: f32 = 0.75;

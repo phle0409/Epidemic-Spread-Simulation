@@ -49,7 +49,7 @@ impl Simulation {
             infected_chart,
             susceptible_chart,
             recovered_chart,
-            social_distancing_radius: 30.0,
+            social_distancing_radius: 50.0,
         }
     }
 
@@ -189,8 +189,8 @@ impl Simulation {
 
     fn apply_forces(&mut self, forces: Vec<(f32, f32)>) {
         for (person, (fx, fy)) in self.community.iter_mut().zip(forces.iter()) {
-            person.velocity_x += fx * 0.1;
-            person.velocity_y += fy * 0.1;
+            person.velocity_x += fx * 0.25;
+            person.velocity_y += fy * 0.25;
             let speed = (person.velocity_x * person.velocity_x
                 + person.velocity_y * person.velocity_y)
                 .sqrt();
