@@ -212,6 +212,7 @@ impl eframe::App for Simulation {
         self.update_community(time_frame_per_second);
         self.update_chart(time_frame_per_second);
         egui::CentralPanel::default().show(ctx, |ui| {
+            // Basic Settings section
             ui.label(egui::RichText::new("Basic Settings").size(18.0).strong());
             ui.horizontal(|ui| {
                 ui.vertical(|ui| {
@@ -238,6 +239,7 @@ impl eframe::App for Simulation {
             });
 
             ui.separator();
+            // Prevention section
             ui.label(
                 egui::RichText::new("Prevention Methods")
                     .size(18.0)
@@ -352,26 +354,68 @@ impl eframe::App for Simulation {
             }
 
             ui.separator();
+            ui.heading("Community Simulation");
+            let quarantine_area_size = 200.0;
+            let gap = 40.0;
+            let padding = 80.0;
+            let width = SIMULATION_AREA_SIZE + gap + quarantine_area_size + padding;
+            let height = SIMULATION_AREA_SIZE + padding;
+
             let (response, painter) = ui.allocate_painter(
-                egui::vec2(SIMULATION_AREA_SIZE + 80.0, SIMULATION_AREA_SIZE + 80.0),
+                egui::vec2(width, height),
                 egui::Sense::hover(),
             );
+
             let rect = response.rect;
             let border_offset_x = rect.left() + BORDER_PADDING;
             let border_offset_y = rect.top() + BORDER_PADDING;
+
             ui.visuals_mut().panel_fill = egui::Color32::BLACK;
-            let rect = egui::Rect::from_min_size(
+
+            // Community
+            let main_rect = egui::Rect::from_min_size(
                 egui::pos2(border_offset_x, border_offset_y),
                 egui::vec2(SIMULATION_AREA_SIZE, SIMULATION_AREA_SIZE),
             );
-            painter.rect_filled(rect, 0.0, egui::Color32::BLACK);
-            painter.rect_stroke(rect, 0.0, egui::Stroke::new(3.0, egui::Color32::WHITE));
+            painter.rect_filled(main_rect, 0.0, egui::Color32::BLACK);
+            painter.rect_stroke(main_rect, 0.0, egui::Stroke::new(3.0, egui::Color32::WHITE));
+
+
+            painter.text(
+                egui::pos2(border_offset_x, border_offset_y - 20.0),
+                egui::Align2::LEFT_CENTER,
+                "Community",
+                egui::FontId::proportional(15.0),
+                egui::Color32::WHITE,
+            );
+
+            // quarantine
+            let quarantine_offset_x = border_offset_x + SIMULATION_AREA_SIZE + gap;
+            let quarantine_rect = egui::Rect::from_min_size(
+                egui::pos2(quarantine_offset_x, border_offset_y),
+                egui::vec2(quarantine_area_size, quarantine_area_size),
+            );
+            painter.rect_filled(quarantine_rect, 0.0, egui::Color32::BLACK);
+            painter.rect_stroke(quarantine_rect, 0.0, egui::Stroke::new(3.0, egui::Color32::WHITE));
+
+            painter.text(
+                egui::pos2(quarantine_offset_x, border_offset_y - 20.0),
+                egui::Align2::LEFT_CENTER,
+                "Quarantine Zone",
+                egui::FontId::proportional(15.0),
+                egui::Color32::WHITE,
+            );
+
+            // people
             for person in &self.community {
-                let particle_pos =
-                    egui::pos2(border_offset_x + person.x, border_offset_y + person.y);
+                let particle_pos = egui::pos2(
+                    border_offset_x + person.x,
+                    border_offset_y + person.y,
+                );
                 painter.circle_filled(particle_pos, PERSON_RADIUS, person.state.person_colors());
             }
         });
+
         ctx.request_repaint();
     }
 }
