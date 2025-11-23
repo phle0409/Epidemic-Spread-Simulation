@@ -52,21 +52,28 @@ impl Person {
     pub fn update_position(&mut self) {
         self.x += self.velocity_x;
         self.y += self.velocity_y;
+
+        let max_size = if self.is_in_quarantine {
+            QUARANTINE_AREA_SIZE
+        } else {
+            SIMULATION_AREA_SIZE
+        };
+
         if self.x <= MARGIN_FROM_WALL {
             self.velocity_x = -self.velocity_x;
             self.x = MARGIN_FROM_WALL;
         }
-        if self.x >= SIMULATION_AREA_SIZE - MARGIN_FROM_WALL {
+        if self.x >= max_size - MARGIN_FROM_WALL {
             self.velocity_x = -self.velocity_x;
-            self.x = SIMULATION_AREA_SIZE - MARGIN_FROM_WALL;
+            self.x = max_size - MARGIN_FROM_WALL;
         }
         if self.y <= MARGIN_FROM_WALL {
             self.velocity_y = -self.velocity_y;
             self.y = MARGIN_FROM_WALL;
         }
-        if self.y >= SIMULATION_AREA_SIZE - MARGIN_FROM_WALL {
+        if self.y >= max_size - MARGIN_FROM_WALL {
             self.velocity_y = -self.velocity_y;
-            self.y = SIMULATION_AREA_SIZE - MARGIN_FROM_WALL;
+            self.y = max_size - MARGIN_FROM_WALL;
         }
     }
 
