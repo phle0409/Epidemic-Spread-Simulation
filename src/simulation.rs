@@ -109,12 +109,10 @@ impl Simulation {
 
     fn is_within_infected_radius(&self, person: &Person) -> bool {
         for member in &self.community {
-            if member.is_infected() {
-                if person.is_in_quarantine == member.is_in_quarantine {
-                    let distance = person.calculate_distance(member);
-                    if distance <= self.infected_radius {
-                        return true;
-                    }
+            if member.is_infected() && person.is_in_quarantine == member.is_in_quarantine {
+                let distance = person.calculate_distance(member);
+                if distance <= self.infected_radius {
+                    return true;
                 }
             }
         }
