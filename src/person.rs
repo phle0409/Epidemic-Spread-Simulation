@@ -116,6 +116,7 @@ mod tests {
             velocity_y: 2.0,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         };
         person.update_position();
         assert_eq!(person.x, 152.0);
@@ -133,6 +134,7 @@ mod tests {
             velocity_y: 2.0,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         };
         person.update_position();
         assert_eq!(person.x, MARGIN_FROM_WALL);
@@ -150,6 +152,7 @@ mod tests {
             velocity_y: 0.0,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         };
         let person2 = Person {
             x: 10.0,
@@ -158,6 +161,7 @@ mod tests {
             velocity_y: 0.0,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         };
         let distance = person1.calculate_distance(&person2);
         assert_eq!(distance, 4.0);
@@ -173,6 +177,7 @@ mod tests {
             velocity_y: 2.0,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         };
         assert!(person.is_susceptible());
     }
@@ -187,6 +192,7 @@ mod tests {
             velocity_y: 2.0,
             state: PersonState::Infected,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         };
         assert!(person.is_infected());
     }

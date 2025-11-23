@@ -588,6 +588,7 @@ mod tests {
             velocity_y: 1.0,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         });
         app.community.push(Person {
             x: 70.0,
@@ -596,6 +597,8 @@ mod tests {
             velocity_y: 1.0,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+
+            is_in_quarantine: false,
         });
         let (fx, fy) = app.calculate_social_distancing_force(0);
         assert!(fx < 0.0);
@@ -614,6 +617,7 @@ mod tests {
             velocity_y: 0.0,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         });
         let forces = vec![(1.0, -1.0)];
         app.apply_forces(forces);
