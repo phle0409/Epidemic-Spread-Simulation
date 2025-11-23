@@ -216,7 +216,7 @@ impl Simulation {
         let mut rng = rand::thread_rng();
 
         for person in &mut self.community {
-            if person.state == PersonState::Infected {
+            if person.state == PersonState::Infected && !person.is_in_quarantine {
                 person.x =
                     rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
                 person.y =

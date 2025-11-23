@@ -95,7 +95,7 @@ impl Person {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    use eframe::egui;
     /// Tests that creating a new person places them within the SIMULATION_AREA_SIZE.
     #[test]
     fn test_create_new_person() {
@@ -194,7 +194,6 @@ mod tests {
     /// Tests that the person state matches the corresponding color in the UI.
     #[test]
     fn test_person_colors() {
-        use eframe::egui;
         assert_eq!(PersonState::Infected.person_colors(), egui::Color32::RED);
         assert_eq!(PersonState::Recovered.person_colors(), egui::Color32::GRAY);
         assert_eq!(
