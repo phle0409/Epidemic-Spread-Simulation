@@ -18,6 +18,7 @@ pub struct Simulation {
     pub recovered_chart: Vec<f32>,
     pub social_distancing_radius: f32,
     pub social_distancing_enabled: bool,
+    pub quarantine_enabled: bool,
 }
 
 impl Simulation {
@@ -52,6 +53,7 @@ impl Simulation {
             recovered_chart,
             social_distancing_radius: 20.0,
             social_distancing_enabled: false,
+            quarantine_enabled: false,
         }
     }
 
@@ -246,6 +248,7 @@ impl eframe::App for Simulation {
                     .strong(),
             );
 
+            // social distancing
             ui.label(
                 egui::RichText::new("Social Distancing")
                     .size(16.0)
@@ -263,6 +266,18 @@ impl eframe::App for Simulation {
                     self.social_distancing_enabled,
                     egui::Slider::new(&mut self.social_distancing_radius, 0.0..=50.0),
                 );
+            });
+
+            // quarantine
+            ui.label(
+                egui::RichText::new("Quarantine")
+                    .size(16.0)
+                    .underline(),
+            );
+
+            ui.horizontal(|ui| {
+                ui.label(egui::RichText::new("Enable:").size(15.0));
+                ui.checkbox(&mut self.quarantine_enabled, "");
             });
 
             ui.separator();
