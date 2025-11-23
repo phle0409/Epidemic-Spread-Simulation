@@ -387,7 +387,8 @@ impl eframe::App for Simulation {
             ui.separator();
             ui.heading("Community Simulation");
             let padding = 80.0;
-            let width = SIMULATION_AREA_SIZE + GAP_COMMUNITY_QUARANTINE + QUARANTINE_AREA_SIZE + padding;
+            let width =
+                SIMULATION_AREA_SIZE + GAP_COMMUNITY_QUARANTINE + QUARANTINE_AREA_SIZE + padding;
             let height = SIMULATION_AREA_SIZE + padding;
 
             let (response, painter) =
@@ -416,7 +417,8 @@ impl eframe::App for Simulation {
             );
 
             // quarantine
-            let quarantine_offset_x = border_offset_x + SIMULATION_AREA_SIZE + GAP_COMMUNITY_QUARANTINE;
+            let quarantine_offset_x =
+                border_offset_x + SIMULATION_AREA_SIZE + GAP_COMMUNITY_QUARANTINE;
             let quarantine_rect = egui::Rect::from_min_size(
                 egui::pos2(quarantine_offset_x, border_offset_y),
                 egui::vec2(QUARANTINE_AREA_SIZE, QUARANTINE_AREA_SIZE),
@@ -438,9 +440,12 @@ impl eframe::App for Simulation {
 
             // people
             for person in &self.community {
-                let particle_pos =
-                    egui::pos2(border_offset_x + person.x, border_offset_y + person.y);
-                painter.circle_filled(particle_pos, PERSON_RADIUS, person.state.person_colors());
+                let dot_postion = if person.is_in_quarantine {
+                    egui::pos2(quarantine_offset_x + person.x, border_offset_y + person.y)
+                } else {
+                    egui::pos2(border_offset_x + person.x, border_offset_y + person.y)
+                };
+                painter.circle_filled(dot_postion, PERSON_RADIUS, person.state.person_colors());
             }
         });
 

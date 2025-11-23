@@ -45,7 +45,7 @@ impl Person {
         }
     }
 
-    pub fn move_to_quarantine(&mut self){
+    pub fn move_to_quarantine(&mut self) {
         self.is_in_quarantine = true;
     }
 
