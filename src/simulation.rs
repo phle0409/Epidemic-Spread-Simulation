@@ -19,6 +19,7 @@ pub struct Simulation {
     pub social_distancing_radius: f32,
     pub social_distancing_enabled: bool,
     pub quarantine_enabled: bool,
+    pub infection_time_before_quarantine: f32,
 }
 
 impl Simulation {
@@ -54,6 +55,7 @@ impl Simulation {
             social_distancing_radius: 20.0,
             social_distancing_enabled: false,
             quarantine_enabled: false,
+            infection_time_before_quarantine: 4.0,
         }
     }
 
@@ -217,7 +219,10 @@ impl Simulation {
         let mut rng = rand::thread_rng();
 
         for person in &mut self.community {
-            if person.state == PersonState::Infected && !person.is_in_quarantine {
+            if person.state == PersonState::Infected
+                && !person.is_in_quarantine
+                && person.infection_duration >= self.infection_time_before_quarantine
+            {
                 person.x =
                     rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
                 person.y =
