@@ -52,3 +52,15 @@ pub const INFECTION_PROBABILITY: f32 = 0.3;
 /// # Default Value
 /// `2.5` pixels per frame
 pub const SOCIAL_DISTANCING_MAX_SPEED: f32 = 0.75;
+
+/// Size of the quarantine area in pixels for quarantine zone.
+///
+/// # Default Value
+/// `200.0` pixels (creating a 200x200  area)
+pub const QUARANTINE_AREA_SIZE: f32 = 200.0;
+
+/// The gap between the community area and the quarantine zone
+///
+/// # Default Value
+/// `40.0` pixels
+pub const GAP_COMMUNITY_QUARANTINE: f32 = 40.0;

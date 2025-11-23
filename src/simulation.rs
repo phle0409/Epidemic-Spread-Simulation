@@ -58,6 +58,8 @@ impl Simulation {
     }
 
     fn update_community(&mut self, time_frame_per_second: f32) {
+        move_infected_to_quarantine();
+
         if self.social_distancing_enabled {
             let mut forces = Vec::new();
             for i in 0..self.community.len() {
@@ -206,6 +208,22 @@ impl Simulation {
             }
         }
     }
+
+    fn move_infected_to_quarantine(&mut self) {
+        if !self.quarantine_enabled {
+            return;
+        }
+        let mut rng = rand::thread_rng();
+
+        for person in &mut self.community {
+            if person.state == PersonState::Infected {
+                person.x =
+                    rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
+                person.y =
+                    rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
+            }
+        }
+    }
 }
 
 impl eframe::App for Simulation {
@@ -269,11 +287,7 @@ impl eframe::App for Simulation {
             });
 
             // quarantine
-            ui.label(
-                egui::RichText::new("Quarantine")
-                    .size(16.0)
-                    .underline(),
-            );
+            ui.label(egui::RichText::new("Quarantine").size(16.0).underline());
 
             ui.horizontal(|ui| {
                 ui.label(egui::RichText::new("Enable:").size(15.0));
@@ -281,6 +295,7 @@ impl eframe::App for Simulation {
             });
 
             ui.separator();
+            // Chart
             if !self.total_time.is_empty() {
                 Plot::new("SIR chart")
                     .height(350.0)
@@ -370,16 +385,14 @@ impl eframe::App for Simulation {
 
             ui.separator();
             ui.heading("Community Simulation");
-            let quarantine_area_size = 200.0;
-            let gap = 40.0;
+            let QUARANTINE_AREA_SIZE = 200.0;
+            let GAP_COMMUNITY_QUARANTINE = 40.0;
             let padding = 80.0;
-            let width = SIMULATION_AREA_SIZE + gap + quarantine_area_size + padding;
+            let width = SIMULATION_AREA_SIZE + GAP_COMMUNITY_QUARANTINE + QUARANTINE_AREA_SIZE + padding;
             let height = SIMULATION_AREA_SIZE + padding;
 
-            let (response, painter) = ui.allocate_painter(
-                egui::vec2(width, height),
-                egui::Sense::hover(),
-            );
+            let (response, painter) =
+                ui.allocate_painter(egui::vec2(width, height), egui::Sense::hover());
 
             let rect = response.rect;
             let border_offset_x = rect.left() + BORDER_PADDING;
@@ -395,7 +408,6 @@ impl eframe::App for Simulation {
             painter.rect_filled(main_rect, 0.0, egui::Color32::BLACK);
             painter.rect_stroke(main_rect, 0.0, egui::Stroke::new(3.0, egui::Color32::WHITE));
 
-
             painter.text(
                 egui::pos2(border_offset_x, border_offset_y - 20.0),
                 egui::Align2::LEFT_CENTER,
@@ -405,13 +417,17 @@ impl eframe::App for Simulation {
             );
 
             // quarantine
-            let quarantine_offset_x = border_offset_x + SIMULATION_AREA_SIZE + gap;
+            let quarantine_offset_x = border_offset_x + SIMULATION_AREA_SIZE + GAP_COMMUNITY_QUARANTINE;
             let quarantine_rect = egui::Rect::from_min_size(
                 egui::pos2(quarantine_offset_x, border_offset_y),
-                egui::vec2(quarantine_area_size, quarantine_area_size),
+                egui::vec2(QUARANTINE_AREA_SIZE, QUARANTINE_AREA_SIZE),
             );
             painter.rect_filled(quarantine_rect, 0.0, egui::Color32::BLACK);
-            painter.rect_stroke(quarantine_rect, 0.0, egui::Stroke::new(3.0, egui::Color32::WHITE));
+            painter.rect_stroke(
+                quarantine_rect,
+                0.0,
+                egui::Stroke::new(3.0, egui::Color32::WHITE),
+            );
 
             painter.text(
                 egui::pos2(quarantine_offset_x, border_offset_y - 20.0),
@@ -423,10 +439,8 @@ impl eframe::App for Simulation {
 
             // people
             for person in &self.community {
-                let particle_pos = egui::pos2(
-                    border_offset_x + person.x,
-                    border_offset_y + person.y,
-                );
+                let particle_pos =
+                    egui::pos2(border_offset_x + person.x, border_offset_y + person.y);
                 painter.circle_filled(particle_pos, PERSON_RADIUS, person.state.person_colors());
             }
         });
