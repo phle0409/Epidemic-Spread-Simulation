@@ -10,7 +10,6 @@ pub struct Simulation {
     pub total_time: Vec<f32>,
     pub community_size: usize,
     pub initial_infected_count: usize,
-    pub recovered_days: f32,
     pub infected_radius: f32,
     pub ui_infected_radius: f32,
     pub infected_chart: Vec<f32>,
@@ -46,7 +45,6 @@ impl Simulation {
             total_time,
             community_size,
             initial_infected_count: INITIAL_INFECTED_PEOPLE,
-            recovered_days: 7.0,
             infected_radius: 3.5,
             ui_infected_radius: 3.5,
             infected_chart,
@@ -55,7 +53,7 @@ impl Simulation {
             social_distancing_radius: 20.0,
             social_distancing_enabled: false,
             quarantine_enabled: false,
-            infection_time_before_quarantine: 4.0,
+            infection_time_before_quarantine: 5.0,
         }
     }
 
@@ -73,7 +71,7 @@ impl Simulation {
         for person in &mut self.community {
             if person.state == PersonState::Infected {
                 person.infection_duration += time_frame_per_second;
-                if person.infection_duration >= self.recovered_days {
+                if person.infection_duration >= RECOVERED_DAY {
                     person.infection_duration = 0.0;
                     person.state = PersonState::Recovered;
                 }
@@ -143,7 +141,6 @@ impl Simulation {
                 * 100.0,
         );
         self.recovered_chart.push(0.0);
-        self.quarantine_enabled = false;
     }
 
     fn update_chart(&mut self, time_frame_per_second: f32) {
@@ -298,7 +295,18 @@ impl eframe::App for Simulation {
 
             ui.horizontal(|ui| {
                 ui.label(egui::RichText::new("Enable:").size(15.0));
-                ui.checkbox(&mut self.quarantine_enabled, "");
+                let quarantine_changed = ui.checkbox(&mut self.quarantine_enabled, "");
+                if quarantine_changed.changed() && self.quarantine_enabled {
+                    self.restart();
+                }
+            });
+
+            ui.horizontal(|ui| {
+                ui.label(egui::RichText::new("Time before quarantine:").size(15.0));
+                ui.add_enabled(
+                    self.quarantine_enabled,
+                    egui::Slider::new(&mut self.infection_time_before_quarantine, 1.0..=5.5),
+                );
             });
 
             ui.separator();
@@ -574,7 +582,7 @@ mod tests {
         let mut app = Simulation::new();
         app.update_community(6.0);
         assert!(matches!(app.community[0].state, PersonState::Infected));
-        app.update_community(1.0);
+        app.update_community(2.0);
         assert!(matches!(app.community[0].state, PersonState::Recovered));
     }
 

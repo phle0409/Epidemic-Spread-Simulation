@@ -64,3 +64,7 @@ pub const QUARANTINE_AREA_SIZE: f32 = 200.0;
 /// # Default Value
 /// `40.0` pixels
 pub const GAP_COMMUNITY_QUARANTINE: f32 = 40.0;
+
+
+
+pub const RECOVERED_DAY: f32 = 8.0;
