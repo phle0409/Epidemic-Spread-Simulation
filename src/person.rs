@@ -27,6 +27,7 @@ pub struct Person {
     pub velocity_y: f32,
     pub state: PersonState,
     pub infection_duration: f32,
+    pub is_in_quarantine: bool,
 }
 
 impl Person {
@@ -40,7 +41,12 @@ impl Person {
             velocity_y: direction.sin() * MOVING_SPEED,
             state: PersonState::Susceptible,
             infection_duration: 0.0,
+            is_in_quarantine: false,
         }
+    }
+
+    pub fn move_to_quarantine(&mut self){
+        self.is_in_quarantine = true;
     }
 
     pub fn update_position(&mut self) {

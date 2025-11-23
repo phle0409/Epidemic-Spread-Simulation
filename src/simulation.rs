@@ -58,7 +58,7 @@ impl Simulation {
     }
 
     fn update_community(&mut self, time_frame_per_second: f32) {
-        move_infected_to_quarantine();
+        self.move_infected_to_quarantine();
 
         if self.social_distancing_enabled {
             let mut forces = Vec::new();
@@ -221,6 +221,7 @@ impl Simulation {
                     rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
                 person.y =
                     rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
+                person.move_to_quarantine();
             }
         }
     }
@@ -385,8 +386,6 @@ impl eframe::App for Simulation {
 
             ui.separator();
             ui.heading("Community Simulation");
-            let QUARANTINE_AREA_SIZE = 200.0;
-            let GAP_COMMUNITY_QUARANTINE = 40.0;
             let padding = 80.0;
             let width = SIMULATION_AREA_SIZE + GAP_COMMUNITY_QUARANTINE + QUARANTINE_AREA_SIZE + padding;
             let height = SIMULATION_AREA_SIZE + padding;
