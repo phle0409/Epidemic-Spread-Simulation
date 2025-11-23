@@ -143,6 +143,7 @@ impl Simulation {
                 * 100.0,
         );
         self.recovered_chart.push(0.0);
+        self.quarantine_enabled = false;
     }
 
     fn update_chart(&mut self, time_frame_per_second: f32) {
