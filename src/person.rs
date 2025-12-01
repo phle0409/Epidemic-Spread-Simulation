@@ -14,7 +14,7 @@ use crate::settings::*;
 /// - `Susceptible`: People who haven't gotten sick yet but could catch the disease
 /// - `Infected`: People who are currently sick and can spread the disease to others
 /// - `Recovered`: People who got better and now have immunity (or died/got isolated and
-///    can't spread it anymore)
+///   can't spread it anymore)
 #[derive(PartialEq)]
 pub enum PersonState {
     Susceptible,
