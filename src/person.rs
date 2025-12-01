@@ -1,8 +1,20 @@
+//! Person module for epidemic spread simulation.
+//!
+//! This module defines the `Person` struct and `PersonState` enum.
+//! It represents each person in the community.
+
 use eframe::egui;
 use rand::Rng;
 
 use crate::settings::*;
 
+/// It represents a person's state in three states of SIR epidemic model.
+///
+/// # States
+/// - `Susceptible`: People who haven't gotten sick yet but could catch the disease
+/// - `Infected`: People who are currently sick and can spread the disease to others
+/// - `Recovered`: People who got better and now have immunity (or died/got isolated and
+///    can't spread it anymore)
 #[derive(PartialEq)]
 pub enum PersonState {
     Susceptible,
@@ -11,6 +23,14 @@ pub enum PersonState {
 }
 
 impl PersonState {
+    /// Returns the color that represetns each person state in the UI.
+    ///
+    /// - `Susceptible`: Blue
+    /// - `Infected`: Red
+    /// - `Recovered`: Gray
+    ///
+    /// # Returns
+    /// An `egui::Color32` value corresponding to the current state
     pub fn person_colors(&self) -> egui::Color32 {
         match self {
             PersonState::Infected => egui::Color32::RED,
@@ -20,6 +40,19 @@ impl PersonState {
     }
 }
 
+
+/// It represents a person in the epidemic simulation.
+///
+/// Each person has an intitial random position x and y.
+/// Each person moves inside the main simulation area or quarantine zone 
+/// with the constant speed at random direction.
+///
+/// # Fields
+/// - `x`, `y`: Current position coordinates in the community or quarantine area.
+/// - `velocity_x`, `velocity_y`: Movement velocity components
+/// - `state`: Current health state (Susceptible, Infected, or Recovered)
+/// - `infection_duration`: Time elapsed since infection started, used to determine when recovery occurs
+/// - `is_in_quarantine`: Determine whether a person is in the quarantine area.
 pub struct Person {
     pub x: f32,
     pub y: f32,

@@ -9,11 +9,10 @@
 /// `350.0` pixels (creating a 350x350 simulation area)
 pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 
-
 /// it represents how many pixels per second that all people move.
 ///
 /// # Default Value
-/// `75.0` pixels per second (equivalent to 1.25 pixels per frame at 60 FPS)
+/// `75.0` pixels per second
 pub const MOVING_SPEED: f32 = 75.0;
 
 /// Border padding around a community simulation area.
@@ -63,7 +62,5 @@ pub const QUARANTINE_AREA_SIZE: f32 = 200.0;
 /// # Default Value
 /// `40.0` pixels
 pub const GAP_COMMUNITY_QUARANTINE: f32 = 40.0;
-
-
 
 pub const RECOVERED_DAY: f32 = 8.0;
