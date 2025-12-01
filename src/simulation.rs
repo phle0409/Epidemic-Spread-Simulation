@@ -52,6 +52,15 @@ pub struct Simulation {
 }
 
 impl Simulation {
+    /// Creates a new simulation with default parameters.
+    ///
+    /// Initializes a community of 80 people (default value, can be changed using UI and restart button).
+    /// Initial infected individuals come from the `INITIAL_INFECTED_PEOPLE` constant
+    /// (default value, can be changed using UI and restart button). 
+    /// Also initializes total_time and chart data vectors for visualization.
+    ///
+    /// # Returns
+    /// A new `Simulation` instance ready to run
     pub fn new() -> Self {
         let community_size = 80;
         let mut community: Vec<Person> = (0..community_size).map(|_| Person::new()).collect();
@@ -87,6 +96,17 @@ impl Simulation {
         }
     }
 
+    /// Updates the community state for one simulation frame (with 60 FPS equal to 1/60 seconds).
+    ///
+    /// Performs these features:
+    /// 1. Moves infected people to quarantine (if enabled)
+    /// 2. Applies social distancing forces (if enabled)
+    /// 3. Updates infection duration (how long a person has been infected) and recoveries
+    /// 4. Updates all people positions
+    /// 5. Spreads infection to nearby people
+    ///
+    /// # Parameters
+    /// - `time_frame_per_second`: Time delta for this frame
     fn update_community(&mut self, time_frame_per_second: f32) {
         self.move_infected_to_quarantine();
 
@@ -112,6 +132,10 @@ impl Simulation {
         self.spread_infection();
     }
 
+    /// Spreads infection to nearby susceptible people based on constant INFECTION_PROBABILITY.
+    ///
+    /// Finds all susceptible people within the infection radius of infected individuals,
+    /// then applies the infection probability to determine who gets infected.
     fn spread_infection(&mut self) {
         let mut rng = rand::thread_rng();
         let susceptibles = self.find_vulnerable_people();
@@ -124,6 +148,10 @@ impl Simulation {
         }
     }
 
+    /// Finds all susceptible people within the infection radius of infected individuals
+    ///
+    /// # Returns
+    /// Vector of indices of vulnerable people in the community
     fn find_vulnerable_people(&self) -> Vec<usize> {
         let mut vulnerable_people = Vec::new();
         for (index, person) in self.community.iter().enumerate() {
@@ -137,6 +165,12 @@ impl Simulation {
         vulnerable_people
     }
 
+    /// Checks if a given person is within infection radius of any infected individual.
+    ///
+    /// # Parameters
+    /// - `person`: The person to check
+    /// # Returns
+    /// `true` if the person is close to an infected individual
     fn is_within_infected_radius(&self, person: &Person) -> bool {
         for member in &self.community {
             if member.is_infected() && person.is_in_quarantine == member.is_in_quarantine {
