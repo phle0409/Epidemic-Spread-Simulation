@@ -341,6 +341,7 @@ impl Simulation {
 }
 
 impl eframe::App for Simulation {
+    /// Implements the eframe::App trait to handle UI rendering and updates
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let time_frame_per_second: f32 = ctx.input(|i| i.stable_dt);
         self.update_community(time_frame_per_second);
