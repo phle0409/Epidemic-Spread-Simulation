@@ -1,3 +1,13 @@
+//! Simulation module for epidemic spread modeling.
+//!
+//! This module contains the main `Simulation` struct that manages the epidemic
+//! simulation using the SIR (Susceptible-Infected-Recovered) model. 
+//! It have some features:
+//! - Community population management (set using UI and restart button)
+//! - Disease transmission. 
+//! - Prevention methods:
+//!    + social distancing.
+//!    + quarantine.
 use eframe::egui;
 use egui_plot::{Line, Plot, PlotPoints};
 use rand::Rng;
@@ -5,9 +15,28 @@ use rand::Rng;
 use crate::person::{Person, PersonState};
 use crate::settings::*;
 
+
+/// Simulation structure for epidemic spread modeling.
+///
+/// It performs the entire epidemic simulation including the community population,
+/// disease transmission, prevention methods, and real-time data visualization.
+///
+/// # Fields
+/// - `community`: Vector of all people in the simulation
+/// - `community_size`: Total number of people in the simulation
+/// - `initial_infected_count`: Number of initially infected people
+/// - `infected_radius`: The initial distance that infected people can spead disease.
+/// - `ui_infected_radius`: UI control value for infection radius (applied on restart)
+/// - `infected_chart`: Percentage of infected people over time
+/// - `susceptible_chart`: Percentage of susceptible people over time
+/// - `recovered_chart`: Percentage of recovered people over time
+/// - `total_time`: Time series data for the x-axis of charts
+/// - `social_distancing_radius`: Distance at which people repel each other
+/// - `social_distancing_enabled`: Determine whether social distancing is active
+/// - `quarantine_enabled`: determine whether quarantine system is active
+/// - `infection_time_before_quarantine`: Time (in seconds) before infected people are moving to quarantine area.
 pub struct Simulation {
     pub community: Vec<Person>,
-    pub total_time: Vec<f32>,
     pub community_size: usize,
     pub initial_infected_count: usize,
     pub infected_radius: f32,
@@ -15,6 +44,7 @@ pub struct Simulation {
     pub infected_chart: Vec<f32>,
     pub susceptible_chart: Vec<f32>,
     pub recovered_chart: Vec<f32>,
+    pub total_time: Vec<f32>,
     pub social_distancing_radius: f32,
     pub social_distancing_enabled: bool,
     pub quarantine_enabled: bool,
