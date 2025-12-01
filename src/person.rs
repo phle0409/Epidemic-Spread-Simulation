@@ -10,7 +10,7 @@ use crate::settings::*;
 
 /// It represents a person's state in three states of SIR epidemic model.
 ///
-/// # States
+/// # Fields
 /// - `Susceptible`: People who haven't gotten sick yet but could catch the disease
 /// - `Infected`: People who are currently sick and can spread the disease to others
 /// - `Recovered`: People who got better and now have immunity (or died/got isolated and
@@ -64,6 +64,16 @@ pub struct Person {
 }
 
 impl Person {
+    /// Creates a new person with randomized initial position and direction.
+    ///
+    /// The initital person has:
+    /// - Random position within the community area
+    /// - Random movement direction
+    /// - Constant speed defined by `MOVING_SPEED`
+    /// - The initial state is `Susceptible`
+    ///
+    /// # Returns
+    /// A new `Person` instance ready to participate in the simulation
     pub fn new() -> Self {
         let mut rng = rand::thread_rng();
         let direction = rng.gen_range(0.0..std::f32::consts::TAU);
@@ -78,10 +88,26 @@ impl Person {
         }
     }
 
+    /// Moves the person to the quarantine area.
+    /// 
+    /// This sets `is_in_quarantine` to true. The person's position will be 
+    /// within the quarantine area bounds in the next `update_position()` call.
     pub fn move_to_quarantine(&mut self) {
         self.is_in_quarantine = true;
     }
 
+
+    /// Updates the person's position
+    ///
+    /// This method updates the position by calculating velocity 
+    /// and time_frame_per_second to handle different GPUs and refresh rates.
+    /// It also handles wall collision cases for all boundaries (top, bottom, left, right, and corners).
+    /// When a person hits a wall:
+    /// - Their velocity is reversed.
+    /// - Their position is clamped to the boundary to prevent wall penetration
+    ///
+    /// # Parameters
+    /// - `time_frame_per_second`: Time delta for this frame
     pub fn update_position(&mut self, time_frame_per_second: f32) {
         self.x += self.velocity_x * time_frame_per_second;
         self.y += self.velocity_y * time_frame_per_second;
@@ -110,14 +136,32 @@ impl Person {
         }
     }
 
+
+    /// Checks if the person is in the susceptible state.
+    ///
+    /// # Returns
+    /// `true` if the person is susceptible to infection, `false` otherwise
     pub fn is_susceptible(&self) -> bool {
         matches!(self.state, PersonState::Susceptible)
     }
 
+    /// Checks if the person is in the infected state.
+    ///
+    /// # Returns
+    /// `true` if the person is infected to infection, `false` otherwise
     pub fn is_infected(&self) -> bool {
         matches!(self.state, PersonState::Infected)
     }
 
+    /// Calculates the Euclidean distance between this person and another person.
+    ///
+    /// This is used to determine if two people are close enough for spreading disease.
+    ///
+    /// # Parameters
+    /// - `other`: Reference to another person to measure distance to
+    ///
+    /// # Returns
+    /// The distance between the two people in community area.
     pub fn calculate_distance(&self, other: &Person) -> f32 {
         let dx = self.x - other.x;
         let dy = self.y - other.y;
