@@ -274,6 +274,13 @@ impl Simulation {
         }
     }
 
+
+    /// Updates chart data.
+    ///
+    /// This method collects real-time data by counting people in each state
+    /// (Susceptible, Infected, Recovered) and converting counts to percentages for visualization.
+    /// # Parameters
+    /// - `time_frame_per_second`: Time elapsed since last update.
     fn update_chart(&mut self, time_frame_per_second: f32) {
         let total_people = self.community.len() as f32;
         if let Some(&last) = self.total_time.last() {
@@ -305,6 +312,9 @@ impl Simulation {
             .push((current_recovered / total_people) * 100.0);
     }
 
+    /// Restarts the simulation with current UI settings.
+    /// This method resets with the new settings from UI. 
+    /// All people are recreated and chart data is cleared.
     fn restart(&mut self) {
         self.infected_radius = self.ui_infected_radius;
         self.community = (0..self.community_size).map(|_| Person::new()).collect();
