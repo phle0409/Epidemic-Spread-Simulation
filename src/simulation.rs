@@ -77,7 +77,7 @@ impl Simulation {
                 }
             }
 
-            person.update_position();
+            person.update_position(time_frame_per_second);
         }
         self.spread_infection();
     }

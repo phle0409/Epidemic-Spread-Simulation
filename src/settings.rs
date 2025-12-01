@@ -9,13 +9,12 @@
 /// `350.0` pixels (creating a 350x350 simulation area)
 pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 
-/// Movement speed for all people in the simulation.
-///
-/// it represents how many pixels per frame that all people move.
+
+/// it represents how many pixels per second that all people move.
 ///
 /// # Default Value
-/// `1.25` pixels per frame
-pub const MOVING_SPEED: f32 = 1.25;
+/// `75.0` pixels per second (equivalent to 1.25 pixels per frame at 60 FPS)
+pub const MOVING_SPEED: f32 = 75.0;
 
 /// Border padding around a community simulation area.
 ///

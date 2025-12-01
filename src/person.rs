@@ -49,9 +49,9 @@ impl Person {
         self.is_in_quarantine = true;
     }
 
-    pub fn update_position(&mut self) {
-        self.x += self.velocity_x;
-        self.y += self.velocity_y;
+    pub fn update_position(&mut self, time_frame_per_second: f32) {
+        self.x += self.velocity_x * time_frame_per_second;
+        self.y += self.velocity_y * time_frame_per_second;
 
         let max_size = if self.is_in_quarantine {
             QUARANTINE_AREA_SIZE
