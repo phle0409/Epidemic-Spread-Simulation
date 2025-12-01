@@ -40,11 +40,10 @@ impl PersonState {
     }
 }
 
-
 /// It represents a person in the epidemic simulation.
 ///
 /// Each person has an intitial random position x and y.
-/// Each person moves inside the main simulation area or quarantine zone 
+/// Each person moves inside the main simulation area or quarantine zone
 /// with the constant speed at random direction.
 ///
 /// # Fields
@@ -89,17 +88,16 @@ impl Person {
     }
 
     /// Moves the person to the quarantine area.
-    /// 
-    /// This sets `is_in_quarantine` to true. The person's position will be 
+    ///
+    /// This sets `is_in_quarantine` to true. The person's position will be
     /// within the quarantine area bounds in the next `update_position()` call.
     pub fn move_to_quarantine(&mut self) {
         self.is_in_quarantine = true;
     }
 
-
     /// Updates the person's position
     ///
-    /// This method updates the position by calculating velocity 
+    /// This method updates the position by calculating velocity
     /// and time_frame_per_second to handle different GPUs and refresh rates.
     /// It also handles wall collision cases for all boundaries (top, bottom, left, right, and corners).
     /// When a person hits a wall:
@@ -135,7 +133,6 @@ impl Person {
             self.y = max_size - MARGIN_FROM_WALL;
         }
     }
-
 
     /// Checks if the person is in the susceptible state.
     ///

@@ -1,10 +1,10 @@
 //! Simulation module for epidemic spread modeling.
 //!
 //! This module contains the main `Simulation` struct that manages the epidemic
-//! simulation using the SIR (Susceptible-Infected-Recovered) model. 
+//! simulation using the SIR (Susceptible-Infected-Recovered) model.
 //! It have some features:
 //! - Community population management (set using UI and restart button)
-//! - Disease transmission. 
+//! - Disease transmission.
 //! - Prevention methods:
 //!    + social distancing.
 //!    + quarantine.
@@ -14,7 +14,6 @@ use rand::Rng;
 
 use crate::person::{Person, PersonState};
 use crate::settings::*;
-
 
 /// Simulation structure for epidemic spread modeling.
 ///
@@ -56,7 +55,7 @@ impl Simulation {
     ///
     /// Initializes a community of 80 people (default value, can be changed using UI and restart button).
     /// Initial infected individuals come from the `INITIAL_INFECTED_PEOPLE` constant
-    /// (default value, can be changed using UI and restart button). 
+    /// (default value, can be changed using UI and restart button).
     /// Also initializes total_time and chart data vectors for visualization.
     ///
     /// # Returns
@@ -183,28 +182,96 @@ impl Simulation {
         false
     }
 
-    fn restart(&mut self) {
-        self.infected_radius = self.ui_infected_radius;
-        self.community = (0..self.community_size).map(|_| Person::new()).collect();
-        for i in 0..self.initial_infected_count {
-            self.community[i].state = PersonState::Infected;
-            self.community[i].infection_duration = 0.0;
+    /// Calculates the repulsion force on a person due to social distancing.
+    ///
+    /// This method implements a simple social distancing model where people
+    /// naturally repel each other when they get too close. The force strength increases
+    /// as people get closer.
+    ///
+    /// # Algorithms
+    /// For each nearby person within `social_distancing_radius`:
+    /// - Calculate the direction vector from the other person to this person
+    /// - Calculate force strength: `(radius - distance) / radius`
+    /// - Add the normalized directional force scaled by strength
+    ///
+    /// # Parameters
+    /// - `own_index: Index of the person to calculate force for
+    ///
+    /// # Returns
+    /// A tuple `(x, y)` representing the force vector acting on the person.
+    /// - Returns (0.0, 0.0) if no one is within the social distancing radius
+    fn calculate_social_distancing_force(&self, own_index: usize) -> (f32, f32) {
+        let mut x = 0.0;
+        let mut y = 0.0;
+        let person = &self.community[own_index];
+        for (index, other) in self.community.iter().enumerate() {
+            if index == own_index {
+                continue;
+            }
+            let distance = person.calculate_distance(other);
+            if distance < self.social_distancing_radius && distance > 0.0 {
+                let dx = person.x - other.x;
+                let dy = person.y - other.y;
+                let strength =
+                    (self.social_distancing_radius - distance) / self.social_distancing_radius;
+                x += (dx / distance) * strength;
+                y += (dy / distance) * strength;
+            }
         }
+        (x, y)
+    }
 
-        self.total_time.clear();
-        self.infected_chart.clear();
-        self.susceptible_chart.clear();
-        self.recovered_chart.clear();
-        self.total_time.push(0.0);
+    /// Applies calculated social distancing forces to person velocities.
+    ///
+    /// This method takes the repulsion forces calculated and applies 
+    /// them to each person's velocity. The forces are scaled down by 0.25 to prevent
+    /// sudden movements (smoother movement  in UI)
+    ///
+    /// # Algorithm
+    /// For each person:
+    /// 1. Add the force to velocity
+    /// 2. Calculate speed
+    /// 3. If speed exceeds `SOCIAL_DISTANCING_MAX_SPEED`, normalize and cap it
+    ///
+    /// # Parameters
+    /// - `forces`: Vector of force tuples `(x, y)` for each person in the community
+    fn apply_forces(&mut self, forces: Vec<(f32, f32)>) {
+        for (person, (fx, fy)) in self.community.iter_mut().zip(forces.iter()) {
+            person.velocity_x += fx * 0.25;
+            person.velocity_y += fy * 0.25;
+            let speed = (person.velocity_x * person.velocity_x
+                + person.velocity_y * person.velocity_y)
+                .sqrt();
+            if speed > SOCIAL_DISTANCING_MAX_SPEED {
+                person.velocity_x = (person.velocity_x / speed) * SOCIAL_DISTANCING_MAX_SPEED;
+                person.velocity_y = (person.velocity_y / speed) * SOCIAL_DISTANCING_MAX_SPEED;
+            }
+        }
+    }
 
-        self.infected_chart
-            .push((self.initial_infected_count as f32 / self.community_size as f32) * 100.0);
-        self.susceptible_chart.push(
-            ((self.community_size - self.initial_infected_count) as f32
-                / self.community_size as f32)
-                * 100.0,
-        );
-        self.recovered_chart.push(0.0);
+    /// Moves infected people to the quarantine area after a specified duration.
+    ///
+    /// When quarantine is enabled, this method identifies infected people with durantion longer than 
+    /// `infection_time_before_quarantine` and move them to
+    /// the quarantine area with a random position.
+    fn move_infected_to_quarantine(&mut self) {
+        if !self.quarantine_enabled {
+            return;
+        }
+        let mut rng = rand::thread_rng();
+
+        for person in &mut self.community {
+            if person.state == PersonState::Infected
+                && !person.is_in_quarantine
+                && person.infection_duration >= self.infection_time_before_quarantine
+            {
+                person.x =
+                    rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
+                person.y =
+                    rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
+                person.move_to_quarantine();
+            }
+        }
     }
 
     fn update_chart(&mut self, time_frame_per_second: f32) {
@@ -238,59 +305,28 @@ impl Simulation {
             .push((current_recovered / total_people) * 100.0);
     }
 
-    fn calculate_social_distancing_force(&self, own_index: usize) -> (f32, f32) {
-        let mut x = 0.0;
-        let mut y = 0.0;
-        let person = &self.community[own_index];
-        for (index, other) in self.community.iter().enumerate() {
-            if index == own_index {
-                continue;
-            }
-            let distance = person.calculate_distance(other);
-            if distance < self.social_distancing_radius && distance > 0.0 {
-                let dx = person.x - other.x;
-                let dy = person.y - other.y;
-                let strength =
-                    (self.social_distancing_radius - distance) / self.social_distancing_radius;
-                x += (dx / distance) * strength;
-                y += (dy / distance) * strength;
-            }
+    fn restart(&mut self) {
+        self.infected_radius = self.ui_infected_radius;
+        self.community = (0..self.community_size).map(|_| Person::new()).collect();
+        for i in 0..self.initial_infected_count {
+            self.community[i].state = PersonState::Infected;
+            self.community[i].infection_duration = 0.0;
         }
-        (x, y)
-    }
 
-    fn apply_forces(&mut self, forces: Vec<(f32, f32)>) {
-        for (person, (fx, fy)) in self.community.iter_mut().zip(forces.iter()) {
-            person.velocity_x += fx * 0.25;
-            person.velocity_y += fy * 0.25;
-            let speed = (person.velocity_x * person.velocity_x
-                + person.velocity_y * person.velocity_y)
-                .sqrt();
-            if speed > SOCIAL_DISTANCING_MAX_SPEED {
-                person.velocity_x = (person.velocity_x / speed) * SOCIAL_DISTANCING_MAX_SPEED;
-                person.velocity_y = (person.velocity_y / speed) * SOCIAL_DISTANCING_MAX_SPEED;
-            }
-        }
-    }
+        self.total_time.clear();
+        self.infected_chart.clear();
+        self.susceptible_chart.clear();
+        self.recovered_chart.clear();
+        self.total_time.push(0.0);
 
-    fn move_infected_to_quarantine(&mut self) {
-        if !self.quarantine_enabled {
-            return;
-        }
-        let mut rng = rand::thread_rng();
-
-        for person in &mut self.community {
-            if person.state == PersonState::Infected
-                && !person.is_in_quarantine
-                && person.infection_duration >= self.infection_time_before_quarantine
-            {
-                person.x =
-                    rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
-                person.y =
-                    rng.gen_range(MARGIN_FROM_WALL..(QUARANTINE_AREA_SIZE - MARGIN_FROM_WALL));
-                person.move_to_quarantine();
-            }
-        }
+        self.infected_chart
+            .push((self.initial_infected_count as f32 / self.community_size as f32) * 100.0);
+        self.susceptible_chart.push(
+            ((self.community_size - self.initial_infected_count) as f32
+                / self.community_size as f32)
+                * 100.0,
+        );
+        self.recovered_chart.push(0.0);
     }
 }
 
