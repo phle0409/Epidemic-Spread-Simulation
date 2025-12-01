@@ -118,7 +118,7 @@ mod tests {
             infection_duration: 0.0,
             is_in_quarantine: false,
         };
-        person.update_position();
+        person.update_position(1.0);
         assert_eq!(person.x, 152.0);
         assert_eq!(person.y, 22.0);
     }
@@ -136,7 +136,7 @@ mod tests {
             infection_duration: 0.0,
             is_in_quarantine: false,
         };
-        person.update_position();
+        person.update_position(1.0);
         assert_eq!(person.x, MARGIN_FROM_WALL);
         assert_eq!(person.velocity_x, 2.0);
         assert_eq!(person.velocity_y, 2.0);
