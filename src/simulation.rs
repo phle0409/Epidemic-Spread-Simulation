@@ -6,8 +6,8 @@
 //! - Community population management (set using UI and restart button)
 //! - Disease transmission.
 //! - Prevention methods:
-//!    + social distancing.
-//!    + quarantine.
+//!    - social distancing.
+//!    - quarantine.
 use eframe::egui;
 use egui_plot::{Line, Plot, PlotPoints};
 use rand::Rng;
