@@ -13,7 +13,7 @@ pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 ///
 /// # Default Value
 /// `50.0` pixels per second
-pub const MOVING_SPEED: f32 = 50.0;
+pub const MOVING_SPEED: f32 = 40.0;
 
 /// Border padding around a community simulation area.
 ///
@@ -49,7 +49,7 @@ pub const INFECTION_PROBABILITY: f32 = 0.3;
 ///
 /// # Default Value
 /// `70.0` pixels per second
-pub const SOCIAL_DISTANCING_MAX_SPEED: f32 = 70.0;
+pub const SOCIAL_DISTANCING_MAX_SPEED: f32 = 40.0;
 
 /// Size of the quarantine area in pixels for quarantine zone.
 ///

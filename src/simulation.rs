@@ -232,8 +232,8 @@ impl Simulation {
     /// - `time_frame_per_second`: Time delta for frame-rate independent physics
     fn apply_forces(&mut self, forces: Vec<(f32, f32)>, time_frame_per_second: f32) {
         for (person, (fx, fy)) in self.community.iter_mut().zip(forces.iter()) {
-            person.velocity_x += fx * 120.0 * time_frame_per_second;
-            person.velocity_y += fy * 120.0 * time_frame_per_second;
+            person.velocity_x += fx * 150.0 * time_frame_per_second;
+            person.velocity_y += fy * 150.0 * time_frame_per_second;
             let speed = (person.velocity_x * person.velocity_x
                 + person.velocity_y * person.velocity_y)
                 .sqrt();
