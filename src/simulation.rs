@@ -737,8 +737,9 @@ mod tests {
             is_in_quarantine: false,
         });
         let forces = vec![(1.0, -1.0)];
-        app.apply_forces(forces, 1.0 / 60.0);
-        assert_eq!(app.community[0].velocity_x, 2.0);
-        assert_eq!(app.community[0].velocity_y, -2.0);
+        let time_delta = 1.0 / 60.0;
+        app.apply_forces(forces, time_delta);
+        assert_eq!(app.community[0].velocity_x, 1.0 * 150.0 * time_delta);
+        assert_eq!(app.community[0].velocity_y, -1.0 * 150.0 * time_delta);
     }
 }
