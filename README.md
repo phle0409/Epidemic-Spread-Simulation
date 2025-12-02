@@ -31,3 +31,15 @@ In this project, each person is like a little dot that moves around in a 2D spac
     - **Quarantine**: The current code is working correctly, but in the UI, users will see that infected people are moved immediately to the quarantine zone without a smooth transition from the community area. I wanted to implement a feature to move infected people smoothly, but it's a UI enhancement that would require extra time and testing, so I didn't implement it.
     - **Travel Between Communities**: In my original plan, I mentioned implementing multiple communities where people could travel between them. I also planned to add a restriction method to limit the number of people traveling to the center area of each community to prevent disease spread. However, this feature would require significant development and testing time, so I haven't implemented it yet.
 
+## Lessons Learned
+I learned many things after finishing this project. During the development process, I encountered numerous problems with my code and figured out how to fix them, partly with the assistance of AI. I mainly used Claude AI to help me fix problems, find algorithms, test my code, and get recommendations on refactoring to make it easier to write unit tests. Below is my development journey:
+
+1. In [person.rs](src/person.rs), I had difficulty finding a simple algorithm for the `update_position` method to handle wall collisions. I used AI to search for and evaluate several algorithms, and found one that works exactly as I wanted.
+
+2. I wanted to show people randomly walking around in a 2D area. I used AI to recommend which library would be best for this and decided to use the `eframe` library. I implemented the basic `eframe::App` structure with only the update method. During this process, I asked AI to provide the basic structure for drawing the 2D space, rendering dots, and changing font sizes. This helped me quickly find the features I needed and saved me a lot of time reading through the documentation.
+
+3. After successfully showing people walking around in the community area, I implemented the infection system with 3 infected people by default (shown in red in the UI). I created the `spread_infection` method, which uses a basic algorithm to find all vulnerable people in the community, then generates a random number and compares it to the `INFECTION_PROBABILITY` constant to determine who gets infected. I had difficulty writing unit tests for `spread_infection`, so I used AI to help me refactor the code into smaller methods like `find_vulnerable_people` and `is_within_infected_radius` to make them easier to test.
+
+4. Next, I created a Basic Settings section in the UI that includes sliders for community size, initial infected count, and infected radius, allowing users to adjust these parameters.
+
+5. I implemented a feature to make infected people become recovered (shown in gray in the UI) after a specific time using the `infection_duration` variable in the `Person` struct.

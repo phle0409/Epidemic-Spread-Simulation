@@ -225,7 +225,9 @@ impl Simulation {
     ///
     /// This method takes the repulsion forces calculated and applies
     /// them to each person's velocity. The forces are scaled down by 0.25 to prevent
-    /// sudden movements (smoother movement  in UI)
+    /// sudden movements (smoother movement  in UI).
+    ///
+    /// `150.0` is a force multiplier constant of the algorithm
     ///
     /// # Parameters
     /// - `forces`: Vector of force tuples `(x, y)` for each person in the community
