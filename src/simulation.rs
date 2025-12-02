@@ -114,7 +114,7 @@ impl Simulation {
             for i in 0..self.community.len() {
                 forces.push(self.calculate_social_distancing_force(i));
             }
-            self.apply_forces(forces);
+            self.apply_forces(forces, time_frame_per_second);
         }
 
         for person in &mut self.community {
@@ -223,22 +223,17 @@ impl Simulation {
 
     /// Applies calculated social distancing forces to person velocities.
     ///
-    /// This method takes the repulsion forces calculated and applies 
+    /// This method takes the repulsion forces calculated and applies
     /// them to each person's velocity. The forces are scaled down by 0.25 to prevent
     /// sudden movements (smoother movement  in UI)
     ///
-    /// # Algorithm
-    /// For each person:
-    /// 1. Add the force to velocity
-    /// 2. Calculate speed
-    /// 3. If speed exceeds `SOCIAL_DISTANCING_MAX_SPEED`, normalize and cap it
-    ///
     /// # Parameters
     /// - `forces`: Vector of force tuples `(x, y)` for each person in the community
-    fn apply_forces(&mut self, forces: Vec<(f32, f32)>) {
+    /// - `time_frame_per_second`: Time delta for frame-rate independent physics
+    fn apply_forces(&mut self, forces: Vec<(f32, f32)>, time_frame_per_second: f32) {
         for (person, (fx, fy)) in self.community.iter_mut().zip(forces.iter()) {
-            person.velocity_x += fx * 0.25;
-            person.velocity_y += fy * 0.25;
+            person.velocity_x += fx * 120.0 * time_frame_per_second;
+            person.velocity_y += fy * 120.0 * time_frame_per_second;
             let speed = (person.velocity_x * person.velocity_x
                 + person.velocity_y * person.velocity_y)
                 .sqrt();
@@ -742,8 +737,8 @@ mod tests {
             is_in_quarantine: false,
         });
         let forces = vec![(1.0, -1.0)];
-        app.apply_forces(forces);
-        assert_eq!(app.community[0].velocity_x, 0.25);
-        assert_eq!(app.community[0].velocity_y, -0.25);
+        app.apply_forces(forces, 1.0 / 60.0);
+        assert_eq!(app.community[0].velocity_x, 2.0);
+        assert_eq!(app.community[0].velocity_y, -2.0);
     }
 }

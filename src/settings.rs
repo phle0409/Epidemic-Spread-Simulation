@@ -12,8 +12,8 @@ pub const SIMULATION_AREA_SIZE: f32 = 350.0;
 /// it represents how many pixels per second that all people move.
 ///
 /// # Default Value
-/// `75.0` pixels per second
-pub const MOVING_SPEED: f32 = 75.0;
+/// `50.0` pixels per second
+pub const MOVING_SPEED: f32 = 50.0;
 
 /// Border padding around a community simulation area.
 ///
@@ -48,8 +48,8 @@ pub const INFECTION_PROBABILITY: f32 = 0.3;
 /// Maximum speed to prevent people from moving too fast when social distancing is enabled.
 ///
 /// # Default Value
-/// `2.5` pixels per frame
-pub const SOCIAL_DISTANCING_MAX_SPEED: f32 = 0.75;
+/// `70.0` pixels per second
+pub const SOCIAL_DISTANCING_MAX_SPEED: f32 = 70.0;
 
 /// Size of the quarantine area in pixels for quarantine zone.
 ///
