@@ -55,3 +55,4 @@ I learned many things after finishing this project. During the development proce
 10. Finally, I spent time testing the code, fixing Clippy warnings, and documenting the codebase with proper comments and documentation. 
 
 ## Project Summary
+In conclusion, after this project, I practiced how to write a small simple project using Rust, practiced Rust syntax, and followed Rust rules. I didn't use external APIs or read any files, so I didn't need much error handling in this project, which led to not having bugs that cause the program to panic. This was also the first time I properly documented my project from modules to unit tests. It took me a lot of time to do it, but overall it gave me experience. Besides, using AI helps me save a lot of time doing research, fixing bugs, searching for algorithms, and refactoring the code. Overall, it gave me a fundamental idea of how to develop an app using Rust. 
