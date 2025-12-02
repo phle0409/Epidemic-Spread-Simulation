@@ -43,3 +43,15 @@ I learned many things after finishing this project. During the development proce
 4. Next, I created a Basic Settings section in the UI that includes sliders for community size, initial infected count, and infected radius, allowing users to adjust these parameters.
 
 5. I implemented a feature to make infected people become recovered (shown in gray in the UI) after a specific time using the `infection_duration` variable in the `Person` struct.
+
+6. After completing the community area in the UI, I implemented a chart to collect and display data tracking all people in each state (susceptible, infected, and recovered). I used AI to find a basic chart solution, and it provided me with the basic structure for displaying and updating the chart in the UI. I created variables to collect data: `infected_chart`, `susceptible_chart`, `recovered_chart`, and `total_time`. I initialized them in the `new` method, updated them in the `update` method, and cleared them in the `restart` method.  
+
+7. Next, I implemented prevention methods to reduce disease spread in the community. First, I implemented the social distancing feature. I used AI to search for algorithms for this feature and found a simple repulsive force algorithm, which I then implemented. The algorithm loops through all people in the community, calculates a tuple (x, y) representing the force vector on each person, and then applies these forces to the velocity x and y for each person. For now, I'm using this simple algorithm. I've seen other algorithms, but they are more complicated to implement and test. I plan to try them later. 
+
+8. I created a Prevention Methods section in the UI with social distancing controls. I used a toggle checkbox to enable and disable this feature, and added a radius slider to allow users to adjust the distance between each person in the community. I tested it with low values for `MOVING_SPEED` and `SOCIAL_DISTANCING_MAX_SPEED`, and it works well. However, when I increased these speeds too high, people appeared to collide with each other in the small community area. I spent most of my time on this project fixing and testing the social distancing feature, as I mentioned in the Known Issues section above. 
+
+9. Next, I implemented the quarantine feature. I had difficulty drawing a quarantine area next to the community area and moving people to it. I used AI to advise me on how to draw the quarantine area as I wanted. Then, I implemented the `move_infected_to_quarantine` method, which is fairly simple.  This changes a person's status using the `is_in_quarantine` variable and modifies the `update_position` method of the `Person` struct to move people to the quarantine area. I then created UI controls with a slider and checkbox for this feature. This feature was much simpler than the social distancing feature, so I didn't have many problems with it.
+
+10. Finally, I spent time testing the code, fixing Clippy warnings, and documenting the codebase with proper comments and documentation. 
+
+## Project Summary
